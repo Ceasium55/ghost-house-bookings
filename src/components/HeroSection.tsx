@@ -19,7 +19,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <Ghost className="w-16 h-16 text-primary mx-auto mb-6 animate-float" />
         
         <h1 className="font-creepster text-6xl md:text-8xl lg:text-9xl tracking-wider glow-primary mb-4">
-          SESE
+          EEB3 Haunted house
         </h1>
         <p className="font-creepster text-2xl md:text-4xl text-accent glow-accent mb-8 animate-flicker">
           Ghost House Experience
