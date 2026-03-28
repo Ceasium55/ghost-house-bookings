@@ -20,12 +20,9 @@ serve(async (req) => {
       });
     }
 
-    const MAILGUN_API_KEY = Deno.env.get('MAILGUN_API_KEY');
-    const MAILGUN_DOMAIN = Deno.env.get('MAILGUN_DOMAIN');
-    const MAILGUN_BASE_URL = Deno.env.get('MAILGUN_BASE_URL');
-
-    if (!MAILGUN_API_KEY || !MAILGUN_DOMAIN || !MAILGUN_BASE_URL) {
-      console.error('Missing Mailgun configuration');
+    const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+    if (!RESEND_API_KEY) {
+      console.error('Missing RESEND_API_KEY');
       return new Response(JSON.stringify({ error: 'Email service not configured' }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -56,24 +53,24 @@ serve(async (req) => {
       </div>
     `;
 
-    const formData = new FormData();
-    formData.append('from', `EEB3 Haunted House <noreply@${MAILGUN_DOMAIN}>`);
-    formData.append('to', email);
-    formData.append('subject', `👻 Booking Confirmed - ${formattedDate} at ${timeSlot}`);
-    formData.append('html', htmlBody);
-
-    const response = await fetch(`${MAILGUN_BASE_URL}/v3/${MAILGUN_DOMAIN}/messages`, {
+    const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${btoa(`api:${MAILGUN_API_KEY}`)}`,
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
       },
-      body: formData,
+      body: JSON.stringify({
+        from: 'EEB3 Haunted House <onboarding@resend.dev>',
+        to: [email],
+        subject: `👻 Booking Confirmed - ${formattedDate} at ${timeSlot}`,
+        html: htmlBody,
+      }),
     });
 
     const result = await response.json();
 
     if (!response.ok) {
-      console.error('Mailgun error:', result);
+      console.error('Resend error:', result);
       return new Response(JSON.stringify({ error: 'Failed to send email', details: result }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
