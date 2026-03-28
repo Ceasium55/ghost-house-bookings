@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import BookingSection from '@/components/BookingSection';
+import FloatingGhosts from '@/components/FloatingGhosts';
 
 const Index = () => {
   const [view, setView] = useState<'hero' | 'booking'>('hero');
 
   return (
     <div className="min-h-screen bg-background">
+      <FloatingGhosts />
       {view === 'hero' ? (
         <HeroSection onBookNow={() => setView('booking')} />
       ) : (
