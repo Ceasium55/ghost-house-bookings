@@ -1,15 +1,15 @@
+import { supabase } from '@/integrations/supabase/client';
+
 export interface Booking {
   id: string;
-  date: string; // '2026-05-07' or '2026-05-08'
-  timeSlot: string; // e.g. '10:00'
+  date: string;
+  time_slot: string;
   name: string;
   email: string;
   phone: string;
-  groupSize: number;
-  createdAt: string;
+  group_size: number;
+  created_at: string;
 }
-
-const STORAGE_KEY = 'sese-ghost-bookings';
 
 // Time slots: every 20 min from 10:00 to 14:40
 export const TIME_SLOTS = [
@@ -23,33 +23,78 @@ export const TIME_SLOTS = [
 export const EVENT_DATES = ['2026-05-07', '2026-05-08'];
 export const MAX_GROUP_SIZE = 6;
 
-export function getBookings(): Booking[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch { return []; }
+export async function getBookings(): Promise<Booking[]> {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*')
+    .order('date', { ascending: true })
+    .order('time_slot', { ascending: true });
+  if (error) {
+    console.error('Error fetching bookings:', error);
+    return [];
+  }
+  return data || [];
 }
 
-export function saveBooking(booking: Omit<Booking, 'id' | 'createdAt'>): Booking {
-  const bookings = getBookings();
-  const newBooking: Booking = {
-    ...booking,
-    id: crypto.randomUUID(),
-    createdAt: new Date().toISOString(),
-  };
-  bookings.push(newBooking);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
-  return newBooking;
+export async function saveBooking(booking: { date: string; timeSlot: string; name: string; email: string; phone: string; groupSize: number }): Promise<Booking | null> {
+  const { data, error } = await supabase
+    .from('bookings')
+    .insert({
+      date: booking.date,
+      time_slot: booking.timeSlot,
+      name: booking.name,
+      email: booking.email,
+      phone: booking.phone,
+      group_size: booking.groupSize,
+    })
+    .select()
+    .single();
+  if (error) {
+    console.error('Error saving booking:', error);
+    return null;
+  }
+  return data;
 }
 
-export function deleteBooking(id: string) {
-  const bookings = getBookings().filter(b => b.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+export async function deleteBooking(id: string): Promise<void> {
+  const { error } = await supabase.from('bookings').delete().eq('id', id);
+  if (error) console.error('Error deleting booking:', error);
 }
 
-export function getSlotAvailability(date: string, timeSlot: string): number {
-  const bookings = getBookings().filter(b => b.date === date && b.timeSlot === timeSlot);
-  const totalBooked = bookings.reduce((sum, b) => sum + b.groupSize, 0);
+export async function getSlotAvailability(date: string, timeSlot: string): Promise<number> {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('group_size')
+    .eq('date', date)
+    .eq('time_slot', timeSlot);
+  if (error) {
+    console.error('Error checking availability:', error);
+    return MAX_GROUP_SIZE;
+  }
+  const totalBooked = (data || []).reduce((sum, b) => sum + b.group_size, 0);
   return MAX_GROUP_SIZE - totalBooked;
+}
+
+export async function sendConfirmationEmail(booking: { name: string; email: string; date: string; timeSlot: string; groupSize: number }): Promise<boolean> {
+  try {
+    const { error } = await supabase.functions.invoke('send-booking-confirmation', {
+      body: {
+        name: booking.name,
+        email: booking.email,
+        date: booking.date,
+        timeSlot: booking.timeSlot,
+        groupSize: booking.groupSize,
+      },
+    });
+    if (error) {
+      console.error('Error sending confirmation email:', error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Failed to send email:', err);
+    return false;
+  }
 }
 
 export function formatDate(dateStr: string): string {
