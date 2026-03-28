@@ -75,7 +75,7 @@ export async function getSlotAvailability(date: string, timeSlot: string): Promi
   return MAX_GROUP_SIZE - totalBooked;
 }
 
-export async function sendConfirmationEmail(booking: { name: string; email: string; date: string; timeSlot: string; groupSize: number }): Promise<boolean> {
+export async function sendConfirmationEmail(booking: { name: string; email: string; date: string; timeSlot: string; groupSize: number; bookingId: string }): Promise<boolean> {
   try {
     const { error } = await supabase.functions.invoke('send-booking-confirmation', {
       body: {
@@ -84,6 +84,7 @@ export async function sendConfirmationEmail(booking: { name: string; email: stri
         date: booking.date,
         timeSlot: booking.timeSlot,
         groupSize: booking.groupSize,
+        bookingId: booking.bookingId,
       },
     });
     if (error) {
