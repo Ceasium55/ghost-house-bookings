@@ -5,11 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE, type Booking } from '@/lib/bookingStore';
-import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminPage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [availability, setAvailability] = useState<Record<string, Record<string, number>>>({});
@@ -56,9 +58,14 @@ const AdminPage = () => {
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
-        <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to site
-        </Link>
+        <div className="flex items-center justify-between mb-8">
+          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to site
+          </Link>
+          <Button variant="outline" size="sm" onClick={async () => { await supabase.auth.signOut(); navigate('/admin/login'); }}>
+            <LogOut className="w-4 h-4" /> Sign out
+          </Button>
+        </div>
 
         <div className="text-center mb-10">
           <Ghost className="w-10 h-10 text-primary mx-auto mb-3" />
