@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import BookingSection from '@/components/BookingSection';
+import FloatingGhosts from '@/components/FloatingGhosts';
 
 const Index = () => {
   const [view, setView] = useState<'hero' | 'booking'>('hero');
