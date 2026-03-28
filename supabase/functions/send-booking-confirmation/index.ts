@@ -60,7 +60,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'EEB3 Haunted House <onboarding@resend.dev>',
+        from: 'EEB3 Haunted House <booking@ghosttourseeb3.online>',
         to: [email],
         subject: `👻 Booking Confirmed - ${formattedDate} at ${timeSlot}`,
         html: htmlBody,
