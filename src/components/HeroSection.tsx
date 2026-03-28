@@ -1,5 +1,6 @@
 import { Ghost, Calendar, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import hauntedHouse from '@/assets/haunted-house-hero.jpg';
 
 interface HeroSectionProps {
   onBookNow: () => void;
@@ -7,10 +8,11 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden fog-overlay">
-      {/* Fog layers */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-background to-transparent" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img src={hauntedHouse} alt="" className="w-full h-full object-cover opacity-40" width={1920} height={1080} />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
