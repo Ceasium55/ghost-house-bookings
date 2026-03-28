@@ -8,6 +8,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <FloatingGhosts />
       {view === 'hero' ? (
         <HeroSection onBookNow={() => setView('booking')} />
       ) : (
