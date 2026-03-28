@@ -11,9 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { name, email, date, timeSlot, groupSize } = await req.json();
+    const { name, email, date, timeSlot, groupSize, bookingId } = await req.json();
 
-    if (!name || !email || !date || !timeSlot || !groupSize) {
+    if (!name || !email || !date || !timeSlot || !groupSize || !bookingId) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -33,6 +33,13 @@ serve(async (req) => {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
 
+    // Short booking reference from UUID
+    const bookingRef = bookingId.substring(0, 8).toUpperCase();
+
+    // Cancel link
+    const siteUrl = Deno.env.get('SITE_URL') || 'https://ghost-house-bookings.lovable.app';
+    const cancelUrl = `${siteUrl}/cancel-booking?id=${bookingId}`;
+
     const htmlBody = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f0a; color: #e0e8e0; padding: 40px 30px; border-radius: 12px;">
         <div style="text-align: center; margin-bottom: 30px;">
@@ -43,13 +50,18 @@ serve(async (req) => {
           <p style="margin: 0 0 12px; color: #ccc;">Hello <strong style="color: #fff;">${name}</strong>,</p>
           <p style="margin: 0 0 20px; color: #ccc;">Your ghost tour has been booked! Here are the details:</p>
           <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; color: #888;">🔖 Reference</td><td style="padding: 8px 0; color: #00ff88; text-align: right; font-family: monospace; font-size: 16px; font-weight: bold;">${bookingRef}</td></tr>
             <tr><td style="padding: 8px 0; color: #888;">📅 Date</td><td style="padding: 8px 0; color: #fff; text-align: right;">${formattedDate}</td></tr>
             <tr><td style="padding: 8px 0; color: #888;">🕐 Time</td><td style="padding: 8px 0; color: #fff; text-align: right;">${timeSlot}</td></tr>
             <tr><td style="padding: 8px 0; color: #888;">👥 Group Size</td><td style="padding: 8px 0; color: #fff; text-align: right;">${groupSize} person(s)</td></tr>
             <tr><td style="padding: 8px 0; color: #888;">⏱ Duration</td><td style="padding: 8px 0; color: #fff; text-align: right;">15 minutes</td></tr>
           </table>
         </div>
-        <p style="text-align: center; color: #666; font-size: 14px;">See you if you dare... 👻</p>
+        <p style="text-align: center; color: #666; font-size: 14px; margin-bottom: 24px;">See you if you dare... 👻</p>
+        <div style="text-align: center; border-top: 1px solid #222; padding-top: 20px;">
+          <p style="color: #555; font-size: 12px; margin: 0 0 8px;">Need to cancel your booking?</p>
+          <a href="${cancelUrl}" style="color: #ff6666; font-size: 12px; text-decoration: underline;">Cancel this booking</a>
+        </div>
       </div>
     `;
 
@@ -62,7 +74,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'EEB3 Haunted House <booking@ghosttourseeb3.online>',
         to: [email],
-        subject: `👻 Booking Confirmed - ${formattedDate} at ${timeSlot}`,
+        subject: `👻 Booking Confirmed - Ref: ${bookingRef} - ${formattedDate} at ${timeSlot}`,
         html: htmlBody,
       }),
     });

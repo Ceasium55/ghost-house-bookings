@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import AdminPage from "./pages/AdminPage.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute.tsx";
+import CancelBooking from "./pages/CancelBooking.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/admin" element={<ProtectedAdminRoute><AdminPage /></ProtectedAdminRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
