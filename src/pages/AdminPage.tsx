@@ -1,29 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
-import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE } from '@/lib/bookingStore';
-import { Ghost, Trash2, ArrowLeft, Users, Calendar } from 'lucide-react';
+import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE, type Booking } from '@/lib/bookingStore';
+import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const AdminPage = () => {
   const { toast } = useToast();
-  const [refresh, setRefresh] = useState(0);
-  const bookings = getBookings();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [availability, setAvailability] = useState<Record<string, Record<string, number>>>({});
 
-  const handleDelete = (id: string) => {
-    deleteBooking(id);
-    setRefresh(r => r + 1);
+  const loadData = async () => {
+    setLoading(true);
+    const data = await getBookings();
+    setBookings(data);
+
+    const avail: Record<string, Record<string, number>> = {};
+    await Promise.all(
+      EVENT_DATES.map(async (date) => {
+        avail[date] = {};
+        await Promise.all(
+          TIME_SLOTS.map(async (slot) => {
+            avail[date][slot] = await getSlotAvailability(date, slot);
+          })
+        );
+      })
+    );
+    setAvailability(avail);
+    setLoading(false);
+  };
+
+  useEffect(() => { loadData(); }, []);
+
+  const handleDelete = async (id: string) => {
+    await deleteBooking(id);
+    await loadData();
     toast({ title: 'Booking deleted' });
   };
 
   const totalBookings = bookings.length;
-  const totalGuests = bookings.reduce((sum, b) => sum + b.groupSize, 0);
+  const totalGuests = bookings.reduce((sum, b) => sum + b.group_size, 0);
 
-  // Force re-render
-  void refresh;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-8 px-4">
@@ -56,7 +84,7 @@ const AdminPage = () => {
           </Card>
           {EVENT_DATES.map(date => {
             const dateBookings = bookings.filter(b => b.date === date);
-            const dateGuests = dateBookings.reduce((s, b) => s + b.groupSize, 0);
+            const dateGuests = dateBookings.reduce((s, b) => s + b.group_size, 0);
             return (
               <Card key={date} className="border-border">
                 <CardContent className="pt-4 text-center">
@@ -91,7 +119,7 @@ const AdminPage = () => {
                     <tr key={slot} className="border-t border-border">
                       <td className="p-2 font-mono">{slot}</td>
                       {EVENT_DATES.map(date => {
-                        const avail = getSlotAvailability(date, slot);
+                        const avail = availability[date]?.[slot] ?? MAX_GROUP_SIZE;
                         return (
                           <td key={date} className="text-center p-2">
                             <Badge variant={avail === 0 ? 'destructive' : avail <= 2 ? 'secondary' : 'default'}>
@@ -132,15 +160,15 @@ const AdminPage = () => {
                   </TableHeader>
                   <TableBody>
                     {bookings
-                      .sort((a, b) => `${a.date}${a.timeSlot}`.localeCompare(`${b.date}${b.timeSlot}`))
+                      .sort((a, b) => `${a.date}${a.time_slot}`.localeCompare(`${b.date}${b.time_slot}`))
                       .map(booking => (
                         <TableRow key={booking.id}>
                           <TableCell>{formatDate(booking.date)}</TableCell>
-                          <TableCell className="font-mono">{booking.timeSlot}</TableCell>
+                          <TableCell className="font-mono">{booking.time_slot}</TableCell>
                           <TableCell>{booking.name}</TableCell>
                           <TableCell>{booking.email}</TableCell>
                           <TableCell>{booking.phone || '—'}</TableCell>
-                          <TableCell>{booking.groupSize}</TableCell>
+                          <TableCell>{booking.group_size}</TableCell>
                           <TableCell>
                             <Button variant="destructive" size="sm" onClick={() => handleDelete(booking.id)}>
                               <Trash2 className="w-4 h-4" />
