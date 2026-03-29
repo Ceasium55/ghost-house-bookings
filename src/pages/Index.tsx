@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
 import BookingSection from '@/components/BookingSection';
-import FloatingGhosts from '@/components/FloatingGhosts';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -11,12 +10,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <FloatingGhosts />
       {view === 'hero' ? (
         <>
           <HeroSection onBookNow={() => setView('booking')} />
           <div className="flex justify-center pb-8">
-            <Button onClick={() => navigate('/')} variant="outline" size="lg" className="font-creepster tracking-widest">
+            <Button onClick={() => navigate('/')} variant="outline" size="lg" className="font-sans font-semibold tracking-wide">
               Back to Activities
             </Button>
           </div>
