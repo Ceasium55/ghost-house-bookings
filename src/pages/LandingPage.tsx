@@ -27,7 +27,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-12">
-      <h1 className="font-creepster text-5xl md:text-7xl lg:text-8xl text-center tracking-wider text-foreground mb-4">
+      <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-center tracking-tight text-foreground mb-4">
         EEB3 School Festival
       </h1>
       <p className="text-tertiary text-lg md:text-xl text-center max-w-xl mb-16">
@@ -42,7 +42,7 @@ const LandingPage = () => {
             className="group relative flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-8 md:p-10 transition-all hover:scale-[1.04] hover:border-secondary hover:shadow-[0_0_30px_hsl(var(--secondary)/0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Icon className="w-12 h-12 text-secondary transition-transform group-hover:scale-110" />
-            <span className="font-creepster text-2xl md:text-3xl tracking-wide text-foreground">
+            <span className="font-sans font-semibold text-2xl md:text-3xl tracking-tight text-foreground">
               {label}
             </span>
             <p className="text-tertiary text-sm text-center leading-relaxed">
