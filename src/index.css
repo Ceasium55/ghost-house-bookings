@@ -6,39 +6,49 @@
 
 @layer base {
   :root {
-    --background: 220 20% 4%;
-    --foreground: 120 10% 90%;
+    /* Primary: #091839 → hsl(221, 76%, 13%) */
+    --background: 221 76% 6%;
+    --foreground: 40 60% 92%;
 
-    --card: 220 15% 8%;
-    --card-foreground: 120 10% 90%;
+    /* Card surfaces slightly lighter than bg */
+    --card: 221 60% 10%;
+    --card-foreground: 40 60% 92%;
 
-    --popover: 220 15% 8%;
-    --popover-foreground: 120 10% 90%;
+    --popover: 221 60% 10%;
+    --popover-foreground: 40 60% 92%;
 
-    --primary: 150 100% 50%;
-    --primary-foreground: 220 20% 4%;
+    /* Primary button/action: secondary brand color #f8e5ba → hsl(38, 85%, 85%) */
+    --primary: 38 85% 85%;
+    --primary-foreground: 221 76% 13%;
 
-    --secondary: 220 15% 14%;
-    --secondary-foreground: 120 10% 85%;
+    /* Secondary: #cdad60 → hsl(40, 52%, 59%) */
+    --secondary: 40 52% 59%;
+    --secondary-foreground: 221 76% 10%;
 
-    --muted: 220 12% 12%;
-    --muted-foreground: 220 10% 50%;
+    /* Muted: dark navy */
+    --muted: 221 50% 14%;
+    --muted-foreground: 225 15% 50%;
 
-    --accent: 15 90% 55%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent: gold #cdad60 */
+    --accent: 40 52% 59%;
+    --accent-foreground: 221 76% 10%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 16%;
-    --input: 220 15% 16%;
-    --ring: 150 100% 50%;
+    /* Border from tertiary #848a9f → hsl(228, 12%, 57%) */
+    --border: 228 20% 22%;
+    --input: 228 20% 22%;
+    --ring: 38 85% 85%;
 
     --radius: 0.75rem;
 
-    --glow-primary: 150 100% 50%;
-    --glow-accent: 15 90% 55%;
-    --surface-ghost: 220 20% 6%;
+    /* Tertiary: #848a9f */
+    --tertiary: 228 12% 57%;
+
+    --glow-primary: 38 85% 85%;
+    --glow-accent: 40 52% 59%;
+    --surface-ghost: 221 60% 8%;
 
     --sidebar-background: 220 15% 6%;
     --sidebar-foreground: 120 10% 90%;
