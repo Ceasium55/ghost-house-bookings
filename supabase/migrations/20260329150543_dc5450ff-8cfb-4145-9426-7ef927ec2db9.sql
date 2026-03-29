@@ -1,0 +1,1 @@
+DROP POLICY "Anyone can create bookings" ON bookings;
