@@ -37,23 +37,26 @@ export async function getBookings(): Promise<Booking[]> {
 }
 
 export async function saveBooking(booking: { date: string; timeSlot: string; name: string; email: string; phone: string; groupSize: number }): Promise<Booking | null> {
-  const { data, error } = await supabase
-    .from('bookings')
-    .insert({
-      date: booking.date,
-      time_slot: booking.timeSlot,
-      name: booking.name,
-      email: booking.email,
-      phone: booking.phone,
-      group_size: booking.groupSize,
-    })
-    .select()
-    .single();
-  if (error) {
-    console.error('Error saving booking:', error);
+  try {
+    const { data, error } = await supabase.functions.invoke('create-booking', {
+      body: {
+        date: booking.date,
+        timeSlot: booking.timeSlot,
+        name: booking.name,
+        email: booking.email,
+        phone: booking.phone,
+        groupSize: booking.groupSize,
+      },
+    });
+    if (error) {
+      console.error('Error saving booking:', error);
+      return null;
+    }
+    return data?.booking || null;
+  } catch (err) {
+    console.error('Failed to save booking:', err);
     return null;
   }
-  return data;
 }
 
 export async function deleteBooking(id: string): Promise<void> {
