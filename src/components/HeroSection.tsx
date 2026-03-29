@@ -31,15 +31,15 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         </p>
 
         <div className="flex flex-wrap justify-center gap-6 mb-12 text-sm md:text-base">
-          <div className="flex items-center gap-2 text-secondary-foreground">
+          <div className="flex items-center gap-2 text-tertiary">
             <Calendar className="w-5 h-5 text-primary" />
             <span>May 7–8, 2026</span>
           </div>
-          <div className="flex items-center gap-2 text-secondary-foreground">
+          <div className="flex items-center gap-2 text-tertiary">
             <Clock className="w-5 h-5 text-primary" />
             <span>10:00 AM – 3:00 PM</span>
           </div>
-          <div className="flex items-center gap-2 text-secondary-foreground">
+          <div className="flex items-center gap-2 text-tertiary">
             <Users className="w-5 h-5 text-primary" />
             <span>Max 6 per tour</span>
           </div>
