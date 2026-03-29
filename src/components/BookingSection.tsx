@@ -8,6 +8,12 @@ import { useToast } from '@/hooks/use-toast';
 import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, sendConfirmationEmail, formatDate } from '@/lib/bookingStore';
 import { Ghost, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 
+interface ParticipantInfo {
+  surnameName: string;
+  yearClass: string;
+  studentId: string;
+}
+
 interface BookingSectionProps {
   onBack: () => void;
 }
@@ -20,6 +26,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [groupSize, setGroupSize] = useState(1);
+  const [participants, setParticipants] = useState<ParticipantInfo[]>([{ surnameName: '', yearClass: '', studentId: '' }]);
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [slotAvailability, setSlotAvailability] = useState<Record<string, number>>({});
@@ -43,6 +50,20 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
   }, [selectedDate, loadAvailability]);
 
+  // Sync participants array with group size
+  useEffect(() => {
+    setParticipants(prev => {
+      if (groupSize > prev.length) {
+        return [...prev, ...Array.from({ length: groupSize - prev.length }, () => ({ surnameName: '', yearClass: '', studentId: '' }))];
+      }
+      return prev.slice(0, groupSize);
+    });
+  }, [groupSize]);
+
+  const updateParticipant = (index: number, field: keyof ParticipantInfo, value: string) => {
+    setParticipants(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
+  };
+
   const currentSlotAvail = selectedSlot ? (slotAvailability[selectedSlot] ?? MAX_GROUP_SIZE) : MAX_GROUP_SIZE;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,6 +78,19 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     if (!name.trim() || !email.trim()) {
       toast({ title: 'Missing info', description: 'Please fill in your name and email.', variant: 'destructive' });
       return;
+    }
+
+    // Validate all participants
+    for (let i = 0; i < participants.length; i++) {
+      const p = participants[i];
+      if (!p.surnameName.trim() || !p.yearClass.trim() || !p.studentId.trim()) {
+        toast({ title: 'Missing participant info', description: `Please fill in all fields for Participant ${i + 1}.`, variant: 'destructive' });
+        return;
+      }
+      if (!/^\d+$/.test(p.studentId.trim()) || parseInt(p.studentId.trim(), 10) <= 0) {
+        toast({ title: 'Invalid ID', description: `Participant ${i + 1}'s ID must be a positive integer.`, variant: 'destructive' });
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -83,15 +117,15 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   if (confirmed) {
     return (
       <section className="min-h-screen flex items-center justify-center px-4">
-        <Card className="max-w-md w-full border-primary/20 glow-box">
+        <Card className="max-w-md w-full border-primary/20">
           <CardContent className="pt-8 text-center">
             <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
-            <h2 className="font-creepster text-3xl glow-primary mb-2">Booking Confirmed!</h2>
+            <h2 className="font-sans font-bold text-3xl text-foreground mb-2">Booking Confirmed!</h2>
             <p className="text-muted-foreground mb-2">
               {formatDate(selectedDate!)} at {selectedSlot}
             </p>
             <p className="text-muted-foreground mb-2">
-              {groupSize} person(s) — See you if you dare... 👻
+              {groupSize} person(s)
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               📧 A confirmation email has been sent to {email}
@@ -112,18 +146,18 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
 
         <div className="text-center mb-10">
           <Ghost className="w-10 h-10 text-primary mx-auto mb-3 animate-float" />
-          <h2 className="font-creepster text-4xl md:text-5xl glow-primary mb-2">Book Your Tour</h2>
+          <h2 className="font-sans font-bold text-4xl md:text-5xl text-foreground mb-2">Book Your Tour</h2>
           <p className="text-muted-foreground">Choose your date and time — each tour lasts 15 minutes</p>
         </div>
 
         {/* Step 1: Date */}
         <div className="mb-8">
-          <h3 className="font-creepster text-xl text-accent mb-4">1. Choose a Date</h3>
+          <h3 className="font-sans font-bold text-xl text-accent mb-4">1. Choose a Date</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {EVENT_DATES.map(date => (
               <Card 
                 key={date}
-                className={`cursor-pointer transition-all hover:scale-[1.02] ${selectedDate === date ? 'border-primary glow-box' : 'border-border hover:border-muted-foreground'}`}
+                className={`cursor-pointer transition-all hover:scale-[1.02] ${selectedDate === date ? 'border-primary' : 'border-border hover:border-muted-foreground'}`}
                 onClick={() => { setSelectedDate(date); setSelectedSlot(null); }}
               >
                 <CardContent className="py-4 text-center">
@@ -137,7 +171,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
         {/* Step 2: Time Slot */}
         {selectedDate && (
           <div className="mb-8">
-            <h3 className="font-creepster text-xl text-accent mb-4">2. Choose a Time Slot</h3>
+            <h3 className="font-sans font-bold text-xl text-accent mb-4">2. Choose a Time Slot</h3>
             {loadingSlots ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -157,7 +191,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                         isFull 
                           ? 'border-border opacity-40 cursor-not-allowed' 
                           : isSelected 
-                            ? 'border-primary bg-primary/10 glow-box' 
+                            ? 'border-primary bg-primary/10' 
                             : 'border-border hover:border-muted-foreground'
                       }`}
                     >
@@ -177,7 +211,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
         {selectedSlot && (
           <Card className="border-border">
             <CardHeader>
-              <CardTitle className="font-creepster text-xl text-accent">3. Your Details</CardTitle>
+              <CardTitle className="font-sans font-bold text-xl text-accent">3. Your Details</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -201,11 +235,63 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                     min={1}
                     max={Math.min(MAX_GROUP_SIZE, currentSlotAvail)}
                     value={groupSize}
-                    onChange={e => setGroupSize(Number(e.target.value))}
+                    onChange={e => setGroupSize(Math.max(1, Math.min(Math.min(MAX_GROUP_SIZE, currentSlotAvail), Number(e.target.value) || 1)))}
                   />
                 </div>
-                <Button type="submit" size="lg" className="w-full font-creepster tracking-wider text-lg" disabled={submitting}>
-                  {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking 👻'}
+
+                {/* Step 4: Participant Details */}
+                <div className="space-y-4 pt-4 border-t border-border">
+                  <h4 className="font-sans font-bold text-lg text-accent">4. Participant Details</h4>
+                  {participants.map((p, i) => (
+                    <Card key={i} className="border-border">
+                      <CardContent className="pt-4 space-y-3">
+                        <p className="font-semibold text-sm text-muted-foreground">Participant {i + 1}</p>
+                        <div>
+                          <Label htmlFor={`surname-name-${i}`}>Surname & Name *</Label>
+                          <Input
+                            id={`surname-name-${i}`}
+                            value={p.surnameName}
+                            onChange={e => updateParticipant(i, 'surnameName', e.target.value)}
+                            placeholder="Doe John"
+                            required
+                            maxLength={100}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`year-class-${i}`}>Year & Class *</Label>
+                          <Input
+                            id={`year-class-${i}`}
+                            value={p.yearClass}
+                            onChange={e => updateParticipant(i, 'yearClass', e.target.value)}
+                            placeholder="S5 ENA"
+                            required
+                            maxLength={20}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor={`student-id-${i}`}>ID *</Label>
+                          <Input
+                            id={`student-id-${i}`}
+                            type="number"
+                            min={1}
+                            value={p.studentId}
+                            onChange={e => {
+                              const val = e.target.value;
+                              if (val === '' || /^\d+$/.test(val)) {
+                                updateParticipant(i, 'studentId', val);
+                              }
+                            }}
+                            placeholder="12345"
+                            required
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Button type="submit" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
+                  {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
                 </Button>
               </form>
             </CardContent>
