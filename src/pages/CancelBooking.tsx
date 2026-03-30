@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Ghost, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Skull, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { formatDate } from '@/lib/bookingStore';
 
 const CancelBooking = () => {
@@ -64,7 +64,7 @@ const CancelBooking = () => {
 
           {status === 'found' && booking && (
             <>
-              <Ghost className="w-16 h-16 text-primary mx-auto mb-4 animate-float" />
+              <Skull className="w-16 h-16 text-primary mx-auto mb-4 animate-float" />
               <h2 className="font-creepster text-2xl glow-primary mb-2">Cancel Booking?</h2>
               <p className="text-muted-foreground mb-1">
                 <strong>{booking.name}</strong> — {booking.group_size} person(s)

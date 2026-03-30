@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE, type Booking } from '@/lib/bookingStore';
-import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
+import { Skull, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -68,7 +68,7 @@ const AdminPage = () => {
         </div>
 
         <div className="text-center mb-10">
-          <Ghost className="w-10 h-10 text-primary mx-auto mb-3" />
+          <Skull className="w-10 h-10 text-primary mx-auto mb-3" />
           <h1 className="font-creepster text-4xl md:text-5xl glow-primary mb-2">Admin Panel</h1>
           <p className="text-muted-foreground">Manage all ghost house reservations</p>
         </div>

@@ -1,4 +1,4 @@
-import { Ghost, Calendar, Clock, Users } from 'lucide-react';
+import { Skull, Calendar, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import hauntedHouse from '@/assets/haunted-house-hero.jpg';
 
@@ -16,7 +16,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
       </div>
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <Ghost className="w-16 h-16 text-primary mx-auto mb-6 animate-float" />
+        <Skull className="w-16 h-16 text-primary mx-auto mb-6 animate-float" />
         
         <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl tracking-tight text-foreground mb-4">
           EEB3 Haunted House
