@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Skull, KeyRound, Gamepad2 } from 'lucide-react';
+import { Ghost, KeyRound, Gamepad2 } from 'lucide-react';
 
 const activities = [
   {
