@@ -53,7 +53,7 @@ const AdminLogin = () => {
 
         <Card className="border-border">
           <CardHeader className="text-center">
-            <Ghost className="w-10 h-10 text-primary mx-auto mb-2" />
+            <BookKey className="w-10 h-10 text-primary mx-auto mb-2" />
             <CardTitle className="font-creepster text-3xl glow-primary">Admin Login</CardTitle>
           </CardHeader>
           <CardContent>
