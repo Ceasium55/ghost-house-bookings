@@ -21,7 +21,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         
         <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
           Dare to enter the most haunted house in Brussels. A spine-chilling 15-minute tour 
-          awaits you at the school festival. If you're brave enough...
+          awaits you behind the C building. If you're brave enough...
         </p>
 
         <div className="flex flex-wrap justify-center gap-6 mb-12 text-sm md:text-base">
