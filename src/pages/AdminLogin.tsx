@@ -83,6 +83,9 @@ const AdminLogin = () => {
                   {isSignUp ? 'Sign in' : 'Create account'}
                 </button>
               </p>
+              <p className="text-center text-sm text-muted-foreground mt-2">
+                Note: only pre-authorised e-mails may access. Contact IT Team in case of issue.
+              </p>
             </form>
           </CardContent>
         </Card>
