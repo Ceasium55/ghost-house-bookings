@@ -60,22 +60,26 @@ export async function saveBooking(booking: { date: string; timeSlot: string; nam
 }
 
 export async function deleteBooking(id: string): Promise<void> {
-  const { error } = await supabase.from('bookings').delete().eq('id', id);
+  const { error } = await supabase.functions.invoke('admin-delete-booking', {
+    body: { bookingId: id },
+  });
   if (error) console.error('Error deleting booking:', error);
 }
 
 export async function getSlotAvailability(date: string, timeSlot: string): Promise<number> {
-  const { data, error } = await supabase
-    .from('bookings')
-    .select('group_size')
-    .eq('date', date)
-    .eq('time_slot', timeSlot);
-  if (error) {
-    console.error('Error checking availability:', error);
+  try {
+    const { data, error } = await supabase.functions.invoke('check-availability', {
+      body: { date, timeSlot },
+    });
+    if (error) {
+      console.error('Error checking availability:', error);
+      return MAX_GROUP_SIZE;
+    }
+    return data?.available ?? MAX_GROUP_SIZE;
+  } catch (err) {
+    console.error('Failed to check availability:', err);
     return MAX_GROUP_SIZE;
   }
-  const totalBooked = (data || []).reduce((sum, b) => sum + b.group_size, 0);
-  return MAX_GROUP_SIZE - totalBooked;
 }
 
 export async function sendConfirmationEmail(booking: { name: string; email: string; date: string; timeSlot: string; groupSize: number; bookingId: string }): Promise<boolean> {
