@@ -54,7 +54,7 @@ const LandingPage = () => {
 
       <footer className="mt-20 text-center">
         <p className="text-tertiary text-sm">
-          Springfest 2026 - The Great Exhibition
+          Sringfest 2026 - The Great Exhibition
         </p>
         <a
           href="/admin"
