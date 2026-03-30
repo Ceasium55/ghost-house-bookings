@@ -4,7 +4,7 @@ import { Skull, KeyRound, Gamepad2 } from 'lucide-react';
 const activities = [
   {
     label: 'Haunted House',
-    icon: Ghost,
+    icon: Skull,
     path: '/haunted-house',
     description: 'A spine-chilling 15-minute tour through the darkness',
   },
