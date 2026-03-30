@@ -1,4 +1,4 @@
-import { Ghost, Calendar, Clock, Users } from 'lucide-react';
+import { Skull, Calendar, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import hauntedHouse from '@/assets/haunted-house-hero.jpg';
 

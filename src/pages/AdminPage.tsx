@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE, type Booking } from '@/lib/bookingStore';
-import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
+import { Skull, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 

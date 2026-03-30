@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Ghost, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Skull, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { formatDate } from '@/lib/bookingStore';
 
 const CancelBooking = () => {
