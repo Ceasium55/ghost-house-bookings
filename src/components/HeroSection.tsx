@@ -13,7 +13,7 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
         <Skull className="w-16 h-16 text-primary mx-auto mb-6 animate-float" />
         
         <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl tracking-tight text-foreground mb-4">
-          EEB3 Haunted House
+          SF26 Haunted House
         </h1>
         <p className="font-sans font-semibold text-xl md:text-3xl text-accent mb-8">
           Ghost House Experience
