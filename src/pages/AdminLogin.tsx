@@ -54,7 +54,7 @@ const AdminLogin = () => {
         <Card className="border-border">
           <CardHeader className="text-center">
             <BookKey className="w-10 h-10 text-primary mx-auto mb-2" />
-            <CardTitle className="font-creepster text-3xl glow-primary">Admin Login</CardTitle>
+            <CardTitle className="font-sans font-bold text-3xl">Admin Login</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
