@@ -20,25 +20,25 @@ const CancelBooking = () => {
       setStatus('not-found');
       return;
     }
-    supabase
-      .from('bookings')
-      .select('name, date, time_slot, group_size')
-      .eq('id', bookingId)
-      .single()
-      .then(({ data, error }) => {
-        if (error || !data) {
-          setStatus('not-found');
-        } else {
-          setBooking(data);
-          setStatus('found');
-        }
-      });
+    // Use edge function to look up booking (no direct DB access needed)
+    supabase.functions.invoke('cancel-booking', {
+      body: { bookingId, action: 'lookup' },
+    }).then(({ data, error }) => {
+      if (error || !data?.booking) {
+        setStatus('not-found');
+      } else {
+        setBooking(data.booking);
+        setStatus('found');
+      }
+    });
   }, [bookingId]);
 
   const handleCancel = async () => {
     if (!bookingId) return;
     setCancelling(true);
-    const { error } = await supabase.from('bookings').delete().eq('id', bookingId);
+    const { error } = await supabase.functions.invoke('cancel-booking', {
+      body: { bookingId, action: 'cancel' },
+    });
     if (error) {
       setStatus('error');
     } else {
