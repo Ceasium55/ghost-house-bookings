@@ -1,4 +1,4 @@
-import { Skull, Calendar, Clock, Users } from 'lucide-react';
+import { Ghost, Calendar, Clock, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface HeroSectionProps {
