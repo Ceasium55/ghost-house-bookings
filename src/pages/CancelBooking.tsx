@@ -64,7 +64,7 @@ const CancelBooking = () => {
 
           {status === 'found' && booking && (
             <>
-              <Ghost className="w-16 h-16 text-primary mx-auto mb-4 animate-float" />
+              <Skull className="w-16 h-16 text-primary mx-auto mb-4 animate-float" />
               <h2 className="font-creepster text-2xl glow-primary mb-2">Cancel Booking?</h2>
               <p className="text-muted-foreground mb-1">
                 <strong>{booking.name}</strong> — {booking.group_size} person(s)
