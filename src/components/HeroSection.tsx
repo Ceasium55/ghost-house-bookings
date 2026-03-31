@@ -6,7 +6,7 @@ interface HeroSectionProps {
   onBack: () => void;
 }
 
-const HeroSection = ({ onBookNow }: HeroSectionProps) => {
+const HeroSection = ({ onBookNow, onBack }: HeroSectionProps) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
