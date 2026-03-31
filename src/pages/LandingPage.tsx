@@ -60,7 +60,7 @@ const LandingPage = () => {
           href="/admin"
           className="text-xs text-tertiary/50 hover:text-tertiary transition-colors mt-1 inline-block"
         >
-          Owner Access
+          Manager access
         </a>
       </footer>
     </div>
