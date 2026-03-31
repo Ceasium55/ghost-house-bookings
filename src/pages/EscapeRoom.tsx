@@ -65,6 +65,15 @@ const EscapeRoom = () => {
       ) : (
         <BookingSection onBack={() => setView('hero')} />
       )}
+
+      <footer className="text-center py-6 border-t border-border mt-auto">
+        <p className="text-tertiary text-sm">
+          SESE Ghost House — School Festival Brussels 2026
+        </p>
+        <a href="/admin" className="text-xs text-tertiary/50 hover:text-tertiary transition-colors mt-1 inline-block">
+          Manager access
+        </a>
+      </footer>
     </div>
   );
 };
