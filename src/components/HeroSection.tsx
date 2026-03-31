@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 
 interface HeroSectionProps {
   onBookNow: () => void;
+  onBack: () => void;
 }
 
 const HeroSection = ({ onBookNow }: HeroSectionProps) => {
