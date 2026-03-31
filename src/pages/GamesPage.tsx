@@ -14,7 +14,7 @@ const GamesPage = () => {
       <p className="text-tertiary text-lg text-center max-w-md mb-10">
         Coming soon — stay tuned for fun activities and challenges!
       </p>
-      <Button onClick={() => navigate('/')} variant="outline" size="lg" className="font-creepster tracking-widest">
+      <Button onClick={() => navigate('/')} variant="outline" size="lg" className="font-sans font-semibold tracking-wide">
         Back to Activities
       </Button>
     </div>
