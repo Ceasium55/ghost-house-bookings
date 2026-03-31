@@ -12,12 +12,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {view === 'hero' ? (
         <>
-          <HeroSection onBookNow={() => setView('booking')} />
-          <div className="flex justify-center pb-8">
-            <Button onClick={() => navigate('/')} variant="outline" size="lg" className="font-sans font-semibold tracking-wide">
-              Back to Activities
-            </Button>
-          </div>
+          <HeroSection onBookNow={() => setView('booking')} onBack={() => navigate('/')} />
         </>
       ) : (
         <BookingSection onBack={() => setView('hero')} />
