@@ -9,10 +9,9 @@ const EscapeRoom = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {view === 'hero' ? (
         <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-card to-background" />
 
           <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
             <KeyRound className="w-16 h-16 text-secondary mx-auto mb-6 animate-float" />

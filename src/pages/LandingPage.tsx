@@ -26,7 +26,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
       <h1 className="font-sans font-bold text-5xl md:text-7xl lg:text-8xl text-center tracking-tight text-foreground mb-4">
         Springfest 2026 - Activities
       </h1>

@@ -67,8 +67,9 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     font-family: 'Inter', sans-serif;
+    background-color: hsl(221 76% 6%);
     background-image: url('/images/sf26-bg.png');
     background-size: cover;
     background-position: center;
@@ -80,7 +81,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    background: hsla(var(--background) / 0.75);
+    background: hsl(221 76% 6% / 0.6);
     z-index: 0;
     pointer-events: none;
   }
