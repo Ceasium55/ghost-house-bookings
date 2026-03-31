@@ -69,6 +69,25 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    background-image: url('/images/sf26-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: hsla(var(--background) / 0.75);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
   }
 }
 
