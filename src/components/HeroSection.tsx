@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 
 interface HeroSectionProps {
   onBookNow: () => void;
+  onBack: () => void;
 }
 
-const HeroSection = ({ onBookNow }: HeroSectionProps) => {
+const HeroSection = ({ onBookNow, onBack }: HeroSectionProps) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
@@ -39,13 +40,23 @@ const HeroSection = ({ onBookNow }: HeroSectionProps) => {
           </div>
         </div>
 
-        <Button 
-          onClick={onBookNow}
-          size="lg"
-          className="text-lg px-10 py-6 font-sans font-semibold tracking-wide hover:scale-105 transition-transform"
-        >
-          Book Your Tour
-        </Button>
+        <div className="flex gap-4 justify-center">
+          <Button 
+            onClick={onBookNow}
+            size="lg"
+            className="text-lg px-10 py-6 font-sans font-semibold tracking-wide hover:scale-105 transition-transform"
+          >
+            Book Your Tour
+          </Button>
+          <Button
+            onClick={onBack}
+            size="lg"
+            variant="outline"
+            className="text-lg px-8 py-6 font-sans font-semibold tracking-wide"
+          >
+            Back
+          </Button>
+        </div>
       </div>
     </section>
   );
