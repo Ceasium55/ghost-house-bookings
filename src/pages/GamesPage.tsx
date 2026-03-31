@@ -8,7 +8,7 @@ const GamesPage = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
       <Gamepad2 className="w-16 h-16 text-secondary mb-6 animate-float" />
-      <h1 className="font-creepster text-5xl md:text-7xl tracking-wider text-foreground mb-4">
+      <h1 className="font-sans font-bold text-5xl md:text-7xl tracking-tight text-foreground mb-4">
         Games
       </h1>
       <p className="text-tertiary text-lg text-center max-w-md mb-10">
