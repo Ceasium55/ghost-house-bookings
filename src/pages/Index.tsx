@@ -9,7 +9,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {view === 'hero' ? (
         <>
           <HeroSection onBookNow={() => setView('booking')} onBack={() => navigate('/')} />

@@ -6,7 +6,7 @@ const GamesPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <Gamepad2 className="w-16 h-16 text-secondary mb-6 animate-float" />
       <h1 className="font-sans font-bold text-5xl md:text-7xl tracking-tight text-foreground mb-4">
         Games
