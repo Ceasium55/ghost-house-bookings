@@ -69,8 +69,8 @@ const AdminPage = () => {
 
         <div className="text-center mb-10">
           <Skull className="w-10 h-10 text-primary mx-auto mb-3" />
-          <h1 className="font-creepster text-4xl md:text-5xl glow-primary mb-2">Admin Panel</h1>
-          <p className="text-muted-foreground">Manage all ghost house reservations</p>
+          <h1 className="font-sans font-bold text-4xl md:text-5xl tracking-tight text-foreground mb-2">Haunted House Admin</h1>
+          <p className="text-muted-foreground">Manage all haunted house reservations</p>
         </div>
 
         {/* Stats */}
