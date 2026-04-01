@@ -146,7 +146,7 @@ const AdminPage = () => {
         {/* Bookings table */}
         <Card className="border-border">
           <CardHeader>
-            <CardTitle className="font-creepster text-xl text-accent">All Reservations</CardTitle>
+            <CardTitle className="font-sans font-semibold text-xl text-accent">All Reservations</CardTitle>
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
