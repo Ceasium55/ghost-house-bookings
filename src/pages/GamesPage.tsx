@@ -24,7 +24,7 @@ const GamesPage = () => {
         <p className="text-tertiary text-sm">
           SESE Ghost House — School Festival Brussels 2026
         </p>
-        <a href="/admin" className="text-xs text-tertiary/50 hover:text-tertiary transition-colors mt-1 inline-block">
+        <a href="/admin" className="text-xs text-primary-foreground font-medium mt-2 inline-block px-3 py-1 rounded-md bg-[#cdad60] hover:bg-[#b89a50] transition-colors">
           Manager access
         </a>
       </footer>
