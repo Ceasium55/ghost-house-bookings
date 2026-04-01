@@ -150,7 +150,7 @@ const AdminPage = () => {
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No bookings yet. The ghosts are waiting... 👻</p>
+              <p className="text-muted-foreground text-center py-8">No bookings yet.</p>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
