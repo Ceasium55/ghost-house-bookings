@@ -106,7 +106,7 @@ const AdminPage = () => {
         {/* Availability grid */}
         <Card className="border-border mb-10">
           <CardHeader>
-            <CardTitle className="font-creepster text-xl text-accent">Slot Availability</CardTitle>
+            <CardTitle className="font-sans font-semibold text-xl text-accent">Slot Availability</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
