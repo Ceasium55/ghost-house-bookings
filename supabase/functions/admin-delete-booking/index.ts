@@ -6,15 +6,12 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-const ADMIN_EMAILS = ['smskackov@outlook.com'];
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Verify the user is authenticated and is an admin
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -26,14 +23,31 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Verify JWT and get user
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
-    if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || '')) {
+    if (authError || !user?.email) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // Check if user is a super admin or in any activity admin table
+    const email = user.email.toLowerCase();
+    const { data: superAdmin } = await supabase.from('super_admins').select('id').eq('email', email).maybeSingle();
+    if (!superAdmin) {
+      // Check all activity tables
+      const checks = await Promise.all([
+        supabase.from('haunted_house_admins').select('id').eq('email', email).maybeSingle(),
+        supabase.from('escape_room_admins').select('id').eq('email', email).maybeSingle(),
+        supabase.from('games_admins').select('id').eq('email', email).maybeSingle(),
+      ]);
+      const isAdmin = checks.some(c => !!c.data);
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     const { bookingId } = await req.json();

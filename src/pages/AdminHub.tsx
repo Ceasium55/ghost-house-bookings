@@ -1,31 +1,43 @@
-import { Ghost, KeyRound, Gamepad2, ArrowLeft, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Ghost, KeyRound, Gamepad2, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { getAccessibleActivities, type AdminActivity } from '@/lib/adminAuth';
 
-const adminActivities = [
-  {
-    label: 'Haunted House',
-    icon: Ghost,
-    path: '/admin/haunted-house',
-    description: 'Manage haunted house bookings and availability',
-  },
-  {
-    label: 'Escape Room',
-    icon: KeyRound,
-    path: '/admin/escape-room',
-    description: 'Manage escape room bookings and availability',
-  },
-  {
-    label: 'Games',
-    icon: Gamepad2,
-    path: '/admin/games',
-    description: 'Manage games activities',
-  },
+const allActivities = [
+  { id: 'haunted-house' as AdminActivity, label: 'Haunted House', icon: Ghost, path: '/admin/haunted-house', description: 'Manage haunted house bookings and availability' },
+  { id: 'escape-room' as AdminActivity, label: 'Escape Room', icon: KeyRound, path: '/admin/escape-room', description: 'Manage escape room bookings and availability' },
+  { id: 'games' as AdminActivity, label: 'Games', icon: Gamepad2, path: '/admin/games', description: 'Manage games activities' },
 ];
 
 const AdminHub = () => {
   const navigate = useNavigate();
+  const [accessible, setAccessible] = useState<AdminActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const activities = await getAccessibleActivities(session?.user?.email);
+      setAccessible(activities);
+      // If only one activity, redirect directly
+      if (activities.length === 1) {
+        navigate(`/admin/${activities[0]}`, { replace: true });
+        return;
+      }
+      setLoading(false);
+    });
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const visibleActivities = allActivities.filter(a => accessible.includes(a.id));
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
@@ -46,8 +58,8 @@ const AdminHub = () => {
           <p className="text-tertiary text-lg">Choose an activity to manage</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
-          {adminActivities.map(({ label, icon: Icon, path, description }) => (
+        <div className={`grid grid-cols-1 ${visibleActivities.length >= 3 ? 'sm:grid-cols-3' : visibleActivities.length === 2 ? 'sm:grid-cols-2' : ''} gap-6 md:gap-8`}>
+          {visibleActivities.map(({ label, icon: Icon, path, description }) => (
             <button
               key={path}
               onClick={() => navigate(path)}
