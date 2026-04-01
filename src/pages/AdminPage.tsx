@@ -59,8 +59,8 @@ const AdminPage = () => {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to site
+          <Link to="/admin" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Admin
           </Link>
           <Button variant="outline" size="sm" onClick={async () => { await supabase.auth.signOut(); navigate('/admin/login'); }}>
             <LogOut className="w-4 h-4" /> Sign out
