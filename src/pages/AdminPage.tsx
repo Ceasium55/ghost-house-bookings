@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE, type Booking } from '@/lib/bookingStore';
-import { Skull, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
+import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -59,8 +59,8 @@ const AdminPage = () => {
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back to site
+          <Link to="/admin" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to Admin
           </Link>
           <Button variant="outline" size="sm" onClick={async () => { await supabase.auth.signOut(); navigate('/admin/login'); }}>
             <LogOut className="w-4 h-4" /> Sign out
@@ -68,9 +68,9 @@ const AdminPage = () => {
         </div>
 
         <div className="text-center mb-10">
-          <Skull className="w-10 h-10 text-primary mx-auto mb-3" />
-          <h1 className="font-creepster text-4xl md:text-5xl glow-primary mb-2">Admin Panel</h1>
-          <p className="text-muted-foreground">Manage all ghost house reservations</p>
+          <Ghost className="w-10 h-10 text-primary mx-auto mb-3" />
+          <h1 className="font-sans font-bold text-4xl md:text-5xl tracking-tight text-foreground mb-2">Haunted House Admin</h1>
+          <p className="text-muted-foreground">Manage all haunted house reservations</p>
         </div>
 
         {/* Stats */}
@@ -106,7 +106,7 @@ const AdminPage = () => {
         {/* Availability grid */}
         <Card className="border-border mb-10">
           <CardHeader>
-            <CardTitle className="font-creepster text-xl text-accent">Slot Availability</CardTitle>
+            <CardTitle className="font-sans font-semibold text-xl text-accent">Slot Availability</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -146,11 +146,11 @@ const AdminPage = () => {
         {/* Bookings table */}
         <Card className="border-border">
           <CardHeader>
-            <CardTitle className="font-creepster text-xl text-accent">All Reservations</CardTitle>
+            <CardTitle className="font-sans font-semibold text-xl text-accent">All Reservations</CardTitle>
           </CardHeader>
           <CardContent>
             {bookings.length === 0 ? (
-              <p className="text-muted-foreground text-center py-8">No bookings yet. The ghosts are waiting... 👻</p>
+              <p className="text-muted-foreground text-center py-8">No bookings yet.</p>
             ) : (
               <div className="overflow-x-auto">
                 <Table>

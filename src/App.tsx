@@ -7,7 +7,10 @@ import LandingPage from "./pages/LandingPage";
 import HauntedHouse from "./pages/Index";
 import EscapeRoom from "./pages/EscapeRoom";
 import GamesPage from "./pages/GamesPage";
+import AdminHub from "./pages/AdminHub";
 import AdminPage from "./pages/AdminPage";
+import AdminEscapeRoom from "./pages/AdminEscapeRoom";
+import AdminGames from "./pages/AdminGames";
 import AdminLogin from "./pages/AdminLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import CancelBooking from "./pages/CancelBooking";
@@ -28,7 +31,10 @@ const App = () => (
           <Route path="/games" element={<GamesPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
-          <Route path="/admin" element={<ProtectedAdminRoute><AdminPage /></ProtectedAdminRoute>} />
+          <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
+          <Route path="/admin/haunted-house" element={<ProtectedAdminRoute><AdminPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/escape-room" element={<ProtectedAdminRoute><AdminEscapeRoom /></ProtectedAdminRoute>} />
+          <Route path="/admin/games" element={<ProtectedAdminRoute><AdminGames /></ProtectedAdminRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
