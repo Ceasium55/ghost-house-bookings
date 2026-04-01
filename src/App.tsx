@@ -32,9 +32,9 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
-          <Route path="/admin/haunted-house" element={<ProtectedAdminRoute><AdminPage /></ProtectedAdminRoute>} />
-          <Route path="/admin/escape-room" element={<ProtectedAdminRoute><AdminEscapeRoom /></ProtectedAdminRoute>} />
-          <Route path="/admin/games" element={<ProtectedAdminRoute><AdminGames /></ProtectedAdminRoute>} />
+          <Route path="/admin/haunted-house" element={<ProtectedAdminRoute activity="haunted-house"><AdminPage /></ProtectedAdminRoute>} />
+          <Route path="/admin/escape-room" element={<ProtectedAdminRoute activity="escape-room"><AdminEscapeRoom /></ProtectedAdminRoute>} />
+          <Route path="/admin/games" element={<ProtectedAdminRoute activity="games"><AdminGames /></ProtectedAdminRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

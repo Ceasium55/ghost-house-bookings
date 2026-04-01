@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { isAdminEmail } from '@/lib/adminAuth';
+import { isAnyAdmin } from '@/lib/adminAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,15 +19,17 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!isAdminEmail(email)) {
-      toast({ title: 'Access denied', description: 'This email is not authorized for admin access.', variant: 'destructive' });
-      return;
-    }
-
     setLoading(true);
+
     try {
       if (isSignUp) {
+        // Check admin access before allowing signup
+        const allowed = await isAnyAdmin(email);
+        if (!allowed) {
+          toast({ title: 'Access denied', description: 'This email is not authorized for admin access.', variant: 'destructive' });
+          setLoading(false);
+          return;
+        }
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         toast({ title: 'Account created', description: 'You can now sign in.' });
@@ -35,6 +37,14 @@ const AdminLogin = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Check admin access after login
+        const allowed = await isAnyAdmin(email);
+        if (!allowed) {
+          await supabase.auth.signOut();
+          toast({ title: 'Access denied', description: 'This email is not authorized for admin access.', variant: 'destructive' });
+          setLoading(false);
+          return;
+        }
         navigate('/admin');
       }
     } catch (err: any) {
