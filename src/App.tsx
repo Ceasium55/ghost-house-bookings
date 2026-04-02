@@ -20,8 +20,13 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  const [loading, setLoading] = useState(true);
+  const handleLoaded = useCallback(() => setLoading(false), []);
+
+  return (
   <QueryClientProvider client={queryClient}>
+    {loading && <LoadingScreen onFinished={handleLoaded} />}
     <TooltipProvider>
       <Toaster />
       <Sonner />
