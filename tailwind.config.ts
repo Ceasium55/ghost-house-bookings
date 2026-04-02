@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         creepster: ['Creepster', 'cursive'],
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Playfair Display', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
