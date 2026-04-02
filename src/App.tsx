@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LoadingScreen from "@/components/LoadingScreen";
+import PageTransition from "@/components/PageTransition";
 import LandingPage from "./pages/LandingPage";
 import HauntedHouse from "./pages/Index";
 import EscapeRoom from "./pages/EscapeRoom";
@@ -31,19 +32,21 @@ const App = () => {
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/haunted-house" element={<HauntedHouse />} />
-          <Route path="/escape-room" element={<EscapeRoom />} />
-          <Route path="/games" element={<GamesPage />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/cancel-booking" element={<CancelBooking />} />
-          <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
-          <Route path="/admin/haunted-house" element={<ProtectedAdminRoute activity="haunted-house"><AdminPage /></ProtectedAdminRoute>} />
-          <Route path="/admin/escape-room" element={<ProtectedAdminRoute activity="escape-room"><AdminEscapeRoom /></ProtectedAdminRoute>} />
-          <Route path="/admin/games" element={<ProtectedAdminRoute activity="games"><AdminGames /></ProtectedAdminRoute>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/haunted-house" element={<HauntedHouse />} />
+            <Route path="/escape-room" element={<EscapeRoom />} />
+            <Route path="/games" element={<GamesPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/cancel-booking" element={<CancelBooking />} />
+            <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
+            <Route path="/admin/haunted-house" element={<ProtectedAdminRoute activity="haunted-house"><AdminPage /></ProtectedAdminRoute>} />
+            <Route path="/admin/escape-room" element={<ProtectedAdminRoute activity="escape-room"><AdminEscapeRoom /></ProtectedAdminRoute>} />
+            <Route path="/admin/games" element={<ProtectedAdminRoute activity="games"><AdminGames /></ProtectedAdminRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </PageTransition>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
