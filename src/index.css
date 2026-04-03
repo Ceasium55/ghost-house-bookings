@@ -138,4 +138,31 @@
   0% { transform: translateX(-100%); opacity: 0; }
   50% { opacity: 0.3; }
   100% { transform: translateX(100%); opacity: 0; }
+
+/* Page transition: split animations */
+.split-left,
+.split-right {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Forward exit: elements fly to sides */
+[data-stage="exit"][data-direction="forward"] .split-left {
+  transform: translateX(-120%) !important;
+  opacity: 0 !important;
+}
+[data-stage="exit"][data-direction="forward"] .split-right {
+  transform: translateX(120%) !important;
+  opacity: 0 !important;
+}
+
+/* Back enter: elements start from sides (no transition initially) */
+[data-stage="enter"][data-direction="back"] .split-left {
+  transform: translateX(-120%) !important;
+  opacity: 0 !important;
+  transition: none !important;
+}
+[data-stage="enter"][data-direction="back"] .split-right {
+  transform: translateX(120%) !important;
+  opacity: 0 !important;
+  transition: none !important;
 }
