@@ -42,7 +42,7 @@ const LandingPage = () => {
           <button
             key={path}
             onClick={() => navigate(path)}
-            className={`split-${split} group relative flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-8 md:p-10 transition-all hover:scale-[1.04] hover:border-secondary hover:shadow-[0_0_30px_hsl(var(--secondary)/0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
+            className={`split-${split} group relative flex flex-col items-center gap-4 rounded-xl border border-border bg-card p-8 md:p-10 hover:scale-[1.04] hover:border-secondary hover:shadow-[0_0_30px_hsl(var(--secondary)/0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring`}
           >
             <Icon className="w-12 h-12 text-secondary transition-transform group-hover:scale-110" />
             <span className="font-sans font-semibold text-2xl md:text-3xl tracking-tight text-foreground">
