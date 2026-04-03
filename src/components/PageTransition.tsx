@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useState, useEffect, useRef, ReactNode, CSSProperties } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 
 const PageTransition = ({ children }: { children: ReactNode }) => {
@@ -21,31 +21,41 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
       setDisplayChildren(children);
       setStage('enter');
 
-      const enterTimer = setTimeout(() => setStage('idle'), 350);
+      // Small delay so 'enter' initial state renders, then transition to 'idle'
+      const enterTimer = setTimeout(() => setStage('idle'), 50);
       return () => clearTimeout(enterTimer);
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [location.key, children, navType]);
 
-  const getClassName = () => {
-    if (stage === 'idle') return 'scale-100 opacity-100';
-    if (stage === 'exit') {
-      return direction === 'forward'
-        ? 'scale-[0.85] opacity-0'
-        : 'scale-110 opacity-0';
+  const getWrapperStyle = (): CSSProperties => {
+    const base: CSSProperties = { minHeight: '100vh', overflow: 'hidden' };
+
+    if (stage === 'idle') {
+      return { ...base, transform: 'scale(1)', opacity: 1, transition: 'transform 0.45s ease-out, opacity 0.45s ease-out' };
     }
-    // enter
-    return direction === 'forward'
-      ? 'scale-110 opacity-0'
-      : 'scale-[0.85] opacity-0';
+
+    if (stage === 'exit') {
+      if (direction === 'back') {
+        // Back exit: zoom out to background
+        return { ...base, transform: 'scale(0.8)', opacity: 0, transition: 'transform 0.5s ease-in, opacity 0.5s ease-in' };
+      }
+      // Forward exit: wrapper stays normal, split elements animate via CSS
+      return { ...base, transform: 'scale(1)', opacity: 1, transition: 'none' };
+    }
+
+    // Enter
+    if (direction === 'forward') {
+      // Forward enter: zoom in from background (start small)
+      return { ...base, transform: 'scale(0.8)', opacity: 0, transition: 'none' };
+    }
+    // Back enter: wrapper normal, split elements come from sides via CSS
+    return { ...base, transform: 'scale(1)', opacity: 1, transition: 'none' };
   };
 
   return (
-    <div
-      className={`transition-all duration-300 ease-in-out ${getClassName()}`}
-      style={{ minHeight: '100vh' }}
-    >
+    <div data-stage={stage} data-direction={direction} style={getWrapperStyle()}>
       {displayChildren}
     </div>
   );
