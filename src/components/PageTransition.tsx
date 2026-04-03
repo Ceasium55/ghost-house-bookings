@@ -30,7 +30,7 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
   }, [location.key, children, navType]);
 
   const getWrapperStyle = (): CSSProperties => {
-    const base: CSSProperties = { minHeight: '100vh', overflow: 'hidden' };
+    const base: CSSProperties = { minHeight: '100vh' };
 
     if (stage === 'idle') {
       return { ...base, transform: 'scale(1)', opacity: 1, transition: 'transform 0.45s ease-out, opacity 0.45s ease-out' };
