@@ -29,16 +29,16 @@ const PageTransition = ({ children }: { children: ReactNode }) => {
   }, [location.key, children, navType]);
 
   const getClassName = () => {
-    if (stage === 'idle') return 'translate-x-0 opacity-100';
+    if (stage === 'idle') return 'scale-100 opacity-100';
     if (stage === 'exit') {
       return direction === 'forward'
-        ? '-translate-x-[30%] opacity-0'
-        : 'translate-x-[30%] opacity-0';
+        ? 'scale-[0.85] opacity-0'
+        : 'scale-110 opacity-0';
     }
     // enter
     return direction === 'forward'
-      ? 'translate-x-[30%] opacity-0'
-      : '-translate-x-[30%] opacity-0';
+      ? 'scale-110 opacity-0'
+      : 'scale-[0.85] opacity-0';
   };
 
   return (
