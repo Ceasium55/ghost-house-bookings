@@ -193,6 +193,12 @@ const AdminGames = () => {
           </CardContent>
         </Card>
       </div>
+      <DeleteBookingDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        bookingName={deleteTarget?.name}
+      />
     </div>
   );
 };
