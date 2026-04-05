@@ -245,10 +245,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                     type="number"
                     min={1}
                     value={groupSize}
-                    onChange={e => {
-                      const val = parseInt(e.target.value, 10);
-                      setGroupSize(isNaN(val) ? 1 : Math.max(1, val));
-                    }}
+                    onChange={e => setGroupSize(e.target.value)}
                   />
                 </div>
 
