@@ -25,7 +25,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [groupSize, setGroupSize] = useState(1);
+  const [groupSize, setGroupSize] = useState('');
   const [participants, setParticipants] = useState<ParticipantInfo[]>([{ surnameName: '', yearClass: '', studentId: '' }]);
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -51,14 +51,21 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   }, [selectedDate, loadAvailability]);
 
   // Sync participants array with group size
+  const parsedGroupSize = parseInt(groupSize, 10);
+  const validGroupSize = !isNaN(parsedGroupSize) && parsedGroupSize > 0 ? parsedGroupSize : 0;
+
   useEffect(() => {
+    if (validGroupSize < 1) {
+      setParticipants([]);
+      return;
+    }
     setParticipants(prev => {
-      if (groupSize > prev.length) {
-        return [...prev, ...Array.from({ length: groupSize - prev.length }, () => ({ surnameName: '', yearClass: '', studentId: '' }))];
+      if (validGroupSize > prev.length) {
+        return [...prev, ...Array.from({ length: validGroupSize - prev.length }, () => ({ surnameName: '', yearClass: '', studentId: '' }))];
       }
-      return prev.slice(0, groupSize);
+      return prev.slice(0, validGroupSize);
     });
-  }, [groupSize]);
+  }, [validGroupSize]);
 
   const updateParticipant = (index: number, field: keyof ParticipantInfo, value: string) => {
     setParticipants(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
@@ -68,14 +75,14 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     e.preventDefault();
     if (!selectedDate || !selectedSlot) return;
 
-    // Validate group size is a positive integer
-    if (!Number.isInteger(groupSize) || groupSize < 1) {
+    const size = parseInt(groupSize, 10);
+    if (!groupSize.trim() || isNaN(size) || size < 1 || !Number.isInteger(size)) {
       toast({ title: 'Invalid number', description: 'Group size must be a positive integer.', variant: 'destructive' });
       return;
     }
 
     const available = slotAvailability[selectedSlot] ?? 0;
-    if (groupSize > available) {
+    if (size > available) {
       toast({ title: 'Invalid number', description: `Only ${available} spot(s) available for this time slot.`, variant: 'destructive' });
       return;
     }
@@ -98,7 +105,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
 
     setSubmitting(true);
-    const booking = await saveBooking({ date: selectedDate, timeSlot: selectedSlot, name: name.trim(), email: email.trim(), phone: phone.trim(), groupSize });
+    const booking = await saveBooking({ date: selectedDate, timeSlot: selectedSlot, name: name.trim(), email: email.trim(), phone: phone.trim(), groupSize: size });
 
     if (!booking) {
       toast({ title: 'Booking failed', description: 'Something went wrong. Please try again.', variant: 'destructive' });
@@ -107,7 +114,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
 
     // Send confirmation email (non-blocking)
-    sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: selectedDate, timeSlot: selectedSlot, groupSize, bookingId: booking.id })
+    sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: selectedDate, timeSlot: selectedSlot, groupSize: size, bookingId: booking.id })
       .then((sent) => {
         if (sent) {
           toast({ title: '📧 Confirmation email sent!', description: `Check ${email.trim()} for your booking details.` });
@@ -238,10 +245,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                     type="number"
                     min={1}
                     value={groupSize}
-                    onChange={e => {
-                      const val = parseInt(e.target.value, 10);
-                      setGroupSize(isNaN(val) ? 1 : Math.max(1, val));
-                    }}
+                    onChange={e => setGroupSize(e.target.value)}
                   />
                 </div>
 
