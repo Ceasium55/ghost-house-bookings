@@ -8,6 +8,7 @@ import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlo
 import { KeyRound, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import DeleteBookingDialog from '@/components/DeleteBookingDialog';
 
 const AdminEscapeRoom = () => {
   const { toast } = useToast();
@@ -15,7 +16,7 @@ const AdminEscapeRoom = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [availability, setAvailability] = useState<Record<string, Record<string, number>>>({});
-
+  const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
   const loadData = async () => {
     setLoading(true);
     const data = await getBookings();
@@ -38,10 +39,12 @@ const AdminEscapeRoom = () => {
 
   useEffect(() => { loadData(); }, []);
 
-  const handleDelete = async (id: string) => {
-    await deleteBooking(id);
+  const handleDelete = async (reason: string) => {
+    if (!deleteTarget) return;
+    await deleteBooking(deleteTarget.id);
     await loadData();
-    toast({ title: 'Booking deleted' });
+    toast({ title: 'Booking deleted', description: reason ? `Reason: ${reason}` : undefined });
+    setDeleteTarget(null);
   };
 
   const totalBookings = bookings.length;
@@ -177,7 +180,7 @@ const AdminEscapeRoom = () => {
                           <TableCell>{booking.phone || '—'}</TableCell>
                           <TableCell>{booking.group_size}</TableCell>
                           <TableCell>
-                            <Button variant="destructive" size="sm" onClick={() => handleDelete(booking.id)}>
+                            <Button variant="destructive" size="sm" onClick={() => setDeleteTarget(booking)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </TableCell>
@@ -190,6 +193,12 @@ const AdminEscapeRoom = () => {
           </CardContent>
         </Card>
       </div>
+      <DeleteBookingDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        bookingName={deleteTarget?.name}
+      />
     </div>
   );
 };
