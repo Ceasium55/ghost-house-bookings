@@ -51,14 +51,21 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   }, [selectedDate, loadAvailability]);
 
   // Sync participants array with group size
+  const parsedGroupSize = parseInt(groupSize, 10);
+  const validGroupSize = !isNaN(parsedGroupSize) && parsedGroupSize > 0 ? parsedGroupSize : 0;
+
   useEffect(() => {
+    if (validGroupSize < 1) {
+      setParticipants([]);
+      return;
+    }
     setParticipants(prev => {
-      if (groupSize > prev.length) {
-        return [...prev, ...Array.from({ length: groupSize - prev.length }, () => ({ surnameName: '', yearClass: '', studentId: '' }))];
+      if (validGroupSize > prev.length) {
+        return [...prev, ...Array.from({ length: validGroupSize - prev.length }, () => ({ surnameName: '', yearClass: '', studentId: '' }))];
       }
-      return prev.slice(0, groupSize);
+      return prev.slice(0, validGroupSize);
     });
-  }, [groupSize]);
+  }, [validGroupSize]);
 
   const updateParticipant = (index: number, field: keyof ParticipantInfo, value: string) => {
     setParticipants(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
