@@ -180,7 +180,7 @@ const AdminEscapeRoom = () => {
                           <TableCell>{booking.phone || '—'}</TableCell>
                           <TableCell>{booking.group_size}</TableCell>
                           <TableCell>
-                            <Button variant="destructive" size="sm" onClick={() => handleDelete(booking.id)}>
+                            <Button variant="destructive" size="sm" onClick={() => setDeleteTarget(booking)}>
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </TableCell>
