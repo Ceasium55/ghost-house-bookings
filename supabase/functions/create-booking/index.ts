@@ -73,8 +73,8 @@ serve(async (req) => {
 
     // Validate group size
     const size = Number(groupSize);
-    if (!Number.isInteger(size) || size < 1 || size > MAX_GROUP_SIZE) {
-      return new Response(JSON.stringify({ error: `Group size must be between 1 and ${MAX_GROUP_SIZE}.` }), {
+    if (!Number.isInteger(size) || size < 1) {
+      return new Response(JSON.stringify({ error: 'Invalid number' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }

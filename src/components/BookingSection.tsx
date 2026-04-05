@@ -64,15 +64,19 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     setParticipants(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
   };
 
-  const currentSlotAvail = selectedSlot ? (slotAvailability[selectedSlot] ?? MAX_GROUP_SIZE) : MAX_GROUP_SIZE;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedDate || !selectedSlot) return;
 
+    // Validate group size is a positive integer
+    if (!Number.isInteger(groupSize) || groupSize < 1) {
+      toast({ title: 'Invalid number', description: 'Group size must be a positive integer.', variant: 'destructive' });
+      return;
+    }
+
     const available = slotAvailability[selectedSlot] ?? 0;
     if (groupSize > available) {
-      toast({ title: 'Not enough spots!', description: `Only ${available} spot(s) remaining for this time slot.`, variant: 'destructive' });
+      toast({ title: 'Invalid number', description: `Only ${available} spot(s) available for this time slot.`, variant: 'destructive' });
       return;
     }
     if (!name.trim() || !email.trim()) {
@@ -228,14 +232,16 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                   <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+32 ..." maxLength={20} />
                 </div>
                 <div>
-                  <Label htmlFor="groupSize">Group Size (max {Math.min(MAX_GROUP_SIZE, currentSlotAvail)})</Label>
+                  <Label htmlFor="groupSize">Group Size</Label>
                   <Input
                     id="groupSize"
                     type="number"
                     min={1}
-                    max={Math.min(MAX_GROUP_SIZE, currentSlotAvail)}
                     value={groupSize}
-                    onChange={e => setGroupSize(Math.max(1, Math.min(Math.min(MAX_GROUP_SIZE, currentSlotAvail), Number(e.target.value) || 1)))}
+                    onChange={e => {
+                      const val = parseInt(e.target.value, 10);
+                      setGroupSize(isNaN(val) ? 1 : Math.max(1, val));
+                    }}
                   />
                 </div>
 
