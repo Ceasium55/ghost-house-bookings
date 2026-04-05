@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, sendConfirmationEmail, formatDate } from '@/lib/bookingStore';
-import { Skull, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
+import { Ghost, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 
 interface ParticipantInfo {
   surnameName: string;
