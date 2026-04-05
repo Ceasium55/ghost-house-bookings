@@ -105,7 +105,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
 
     setSubmitting(true);
-    const booking = await saveBooking({ date: selectedDate, timeSlot: selectedSlot, name: name.trim(), email: email.trim(), phone: phone.trim(), groupSize });
+    const booking = await saveBooking({ date: selectedDate, timeSlot: selectedSlot, name: name.trim(), email: email.trim(), phone: phone.trim(), groupSize: size });
 
     if (!booking) {
       toast({ title: 'Booking failed', description: 'Something went wrong. Please try again.', variant: 'destructive' });
