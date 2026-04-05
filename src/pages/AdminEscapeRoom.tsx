@@ -39,10 +39,12 @@ const AdminEscapeRoom = () => {
 
   useEffect(() => { loadData(); }, []);
 
-  const handleDelete = async (id: string) => {
-    await deleteBooking(id);
+  const handleDelete = async (reason: string) => {
+    if (!deleteTarget) return;
+    await deleteBooking(deleteTarget.id);
     await loadData();
-    toast({ title: 'Booking deleted' });
+    toast({ title: 'Booking deleted', description: reason ? `Reason: ${reason}` : undefined });
+    setDeleteTarget(null);
   };
 
   const totalBookings = bookings.length;
