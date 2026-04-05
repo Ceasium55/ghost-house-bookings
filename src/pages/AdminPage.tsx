@@ -8,6 +8,7 @@ import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlo
 import { Ghost, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import DeleteBookingDialog from '@/components/DeleteBookingDialog';
 
 const AdminPage = () => {
   const { toast } = useToast();
@@ -15,7 +16,7 @@ const AdminPage = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [availability, setAvailability] = useState<Record<string, Record<string, number>>>({});
-
+  const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
   const loadData = async () => {
     setLoading(true);
     const data = await getBookings();
