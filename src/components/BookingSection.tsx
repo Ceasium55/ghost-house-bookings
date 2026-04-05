@@ -232,14 +232,16 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                   <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+32 ..." maxLength={20} />
                 </div>
                 <div>
-                  <Label htmlFor="groupSize">Group Size (max {Math.min(MAX_GROUP_SIZE, currentSlotAvail)})</Label>
+                  <Label htmlFor="groupSize">Group Size</Label>
                   <Input
                     id="groupSize"
                     type="number"
                     min={1}
-                    max={Math.min(MAX_GROUP_SIZE, currentSlotAvail)}
                     value={groupSize}
-                    onChange={e => setGroupSize(Math.max(1, Math.min(Math.min(MAX_GROUP_SIZE, currentSlotAvail), Number(e.target.value) || 1)))}
+                    onChange={e => {
+                      const val = parseInt(e.target.value, 10);
+                      setGroupSize(isNaN(val) ? 1 : Math.max(1, val));
+                    }}
                   />
                 </div>
 
