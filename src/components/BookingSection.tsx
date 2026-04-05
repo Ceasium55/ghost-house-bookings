@@ -75,14 +75,14 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     e.preventDefault();
     if (!selectedDate || !selectedSlot) return;
 
-    // Validate group size is a positive integer
-    if (!Number.isInteger(groupSize) || groupSize < 1) {
+    const size = parseInt(groupSize, 10);
+    if (!groupSize.trim() || isNaN(size) || size < 1 || !Number.isInteger(size)) {
       toast({ title: 'Invalid number', description: 'Group size must be a positive integer.', variant: 'destructive' });
       return;
     }
 
     const available = slotAvailability[selectedSlot] ?? 0;
-    if (groupSize > available) {
+    if (size > available) {
       toast({ title: 'Invalid number', description: `Only ${available} spot(s) available for this time slot.`, variant: 'destructive' });
       return;
     }
