@@ -25,7 +25,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [groupSize, setGroupSize] = useState(1);
+  const [groupSize, setGroupSize] = useState('');
   const [participants, setParticipants] = useState<ParticipantInfo[]>([{ surnameName: '', yearClass: '', studentId: '' }]);
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
