@@ -114,7 +114,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
 
     // Send confirmation email (non-blocking)
-    sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: selectedDate, timeSlot: selectedSlot, groupSize, bookingId: booking.id })
+    sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: selectedDate, timeSlot: selectedSlot, groupSize: size, bookingId: booking.id })
       .then((sent) => {
         if (sent) {
           toast({ title: '📧 Confirmation email sent!', description: `Check ${email.trim()} for your booking details.` });
