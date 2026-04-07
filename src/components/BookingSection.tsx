@@ -26,11 +26,12 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [groupSize, setGroupSize] = useState('');
-  const [participants, setParticipants] = useState<ParticipantInfo[]>([{ surnameName: '', yearClass: '', studentId: '' }]);
+  const [participants, setParticipants] = useState<ParticipantInfo[]>([]);
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [slotAvailability, setSlotAvailability] = useState<Record<string, number>>({});
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
 
   const loadAvailability = useCallback(async (date: string) => {
     setLoadingSlots(true);
@@ -50,22 +51,17 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
   }, [selectedDate, loadAvailability]);
 
-  // Sync participants array with group size
-  const parsedGroupSize = parseInt(groupSize, 10);
-  const validGroupSize = !isNaN(parsedGroupSize) && parsedGroupSize > 0 ? parsedGroupSize : 0;
-
-  useEffect(() => {
-    if (validGroupSize < 1) {
-      setParticipants([]);
+  const handleNext = () => {
+    if (!selectedSlot) return;
+    const size = parseInt(groupSize, 10);
+    const available = slotAvailability[selectedSlot] ?? 0;
+    if (!groupSize.trim() || isNaN(size) || size < 1 || !Number.isInteger(size) || size > available) {
+      toast({ title: 'Invalid input', description: `Please enter a whole number between 1 and ${available}.`, variant: 'destructive' });
       return;
     }
-    setParticipants(prev => {
-      if (validGroupSize > prev.length) {
-        return [...prev, ...Array.from({ length: validGroupSize - prev.length }, () => ({ surnameName: '', yearClass: '', studentId: '' }))];
-      }
-      return prev.slice(0, validGroupSize);
-    });
-  }, [validGroupSize]);
+    setParticipants(Array.from({ length: size }, () => ({ surnameName: '', yearClass: '', studentId: '' })));
+    setShowParticipants(true);
+  };
 
   const updateParticipant = (index: number, field: keyof ParticipantInfo, value: string) => {
     setParticipants(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
@@ -245,64 +241,75 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                     type="number"
                     min={1}
                     value={groupSize}
-                    onChange={e => setGroupSize(e.target.value)}
+                    onChange={e => { setGroupSize(e.target.value); setShowParticipants(false); }}
+                    disabled={showParticipants}
                   />
                 </div>
 
-                {/* Step 4: Participant Details */}
-                <div className="space-y-4 pt-4 border-t border-border">
-                  <h4 className="font-sans font-bold text-lg text-accent">4. Participant Details</h4>
-                  {participants.map((p, i) => (
-                    <Card key={i} className="border-border">
-                      <CardContent className="pt-4 space-y-3">
-                        <p className="font-semibold text-sm text-muted-foreground">Participant {i + 1}</p>
-                        <div>
-                          <Label htmlFor={`surname-name-${i}`}>Surname & Name *</Label>
-                          <Input
-                            id={`surname-name-${i}`}
-                            value={p.surnameName}
-                            onChange={e => updateParticipant(i, 'surnameName', e.target.value)}
-                            placeholder="Doe John"
-                            required
-                            maxLength={100}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`year-class-${i}`}>Year & Class *</Label>
-                          <Input
-                            id={`year-class-${i}`}
-                            value={p.yearClass}
-                            onChange={e => updateParticipant(i, 'yearClass', e.target.value)}
-                            placeholder="S5 ENA"
-                            required
-                            maxLength={20}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`student-id-${i}`}>ID *</Label>
-                          <Input
-                            id={`student-id-${i}`}
-                            type="number"
-                            min={1}
-                            value={p.studentId}
-                            onChange={e => {
-                              const val = e.target.value;
-                              if (val === '' || /^\d+$/.test(val)) {
-                                updateParticipant(i, 'studentId', val);
-                              }
-                            }}
-                            placeholder="12345"
-                            required
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                {!showParticipants && (
+                  <Button type="button" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" onClick={handleNext}>
+                    Next
+                  </Button>
+                )}
 
-                <Button type="submit" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
-                  {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
-                </Button>
+                {/* Step 4: Participant Details */}
+                {showParticipants && (
+                  <>
+                    <div className="space-y-4 pt-4 border-t border-border">
+                      <h4 className="font-sans font-bold text-lg text-accent">4. Participant Details</h4>
+                      {participants.map((p, i) => (
+                        <Card key={i} className="border-border">
+                          <CardContent className="pt-4 space-y-3">
+                            <p className="font-semibold text-sm text-muted-foreground">Participant {i + 1}</p>
+                            <div>
+                              <Label htmlFor={`surname-name-${i}`}>Surname & Name *</Label>
+                              <Input
+                                id={`surname-name-${i}`}
+                                value={p.surnameName}
+                                onChange={e => updateParticipant(i, 'surnameName', e.target.value)}
+                                placeholder="Doe John"
+                                required
+                                maxLength={100}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`year-class-${i}`}>Year & Class *</Label>
+                              <Input
+                                id={`year-class-${i}`}
+                                value={p.yearClass}
+                                onChange={e => updateParticipant(i, 'yearClass', e.target.value)}
+                                placeholder="S5 ENA"
+                                required
+                                maxLength={20}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`student-id-${i}`}>ID *</Label>
+                              <Input
+                                id={`student-id-${i}`}
+                                type="number"
+                                min={1}
+                                value={p.studentId}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  if (val === '' || /^\d+$/.test(val)) {
+                                    updateParticipant(i, 'studentId', val);
+                                  }
+                                }}
+                                placeholder="12345"
+                                required
+                              />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    <Button type="submit" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
+                      {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
+                    </Button>
+                  </>
+                )}
               </form>
             </CardContent>
           </Card>
