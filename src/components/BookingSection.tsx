@@ -241,7 +241,8 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                     type="number"
                     min={1}
                     value={groupSize}
-                    onChange={e => setGroupSize(e.target.value)}
+                    onChange={e => { setGroupSize(e.target.value); setShowParticipants(false); }}
+                    disabled={showParticipants}
                   />
                 </div>
 
