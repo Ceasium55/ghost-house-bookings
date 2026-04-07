@@ -245,60 +245,70 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                   />
                 </div>
 
-                {/* Step 4: Participant Details */}
-                <div className="space-y-4 pt-4 border-t border-border">
-                  <h4 className="font-sans font-bold text-lg text-accent">4. Participant Details</h4>
-                  {participants.map((p, i) => (
-                    <Card key={i} className="border-border">
-                      <CardContent className="pt-4 space-y-3">
-                        <p className="font-semibold text-sm text-muted-foreground">Participant {i + 1}</p>
-                        <div>
-                          <Label htmlFor={`surname-name-${i}`}>Surname & Name *</Label>
-                          <Input
-                            id={`surname-name-${i}`}
-                            value={p.surnameName}
-                            onChange={e => updateParticipant(i, 'surnameName', e.target.value)}
-                            placeholder="Doe John"
-                            required
-                            maxLength={100}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`year-class-${i}`}>Year & Class *</Label>
-                          <Input
-                            id={`year-class-${i}`}
-                            value={p.yearClass}
-                            onChange={e => updateParticipant(i, 'yearClass', e.target.value)}
-                            placeholder="S5 ENA"
-                            required
-                            maxLength={20}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor={`student-id-${i}`}>ID *</Label>
-                          <Input
-                            id={`student-id-${i}`}
-                            type="number"
-                            min={1}
-                            value={p.studentId}
-                            onChange={e => {
-                              const val = e.target.value;
-                              if (val === '' || /^\d+$/.test(val)) {
-                                updateParticipant(i, 'studentId', val);
-                              }
-                            }}
-                            placeholder="12345"
-                            required
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                {!showParticipants && (
+                  <Button type="button" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" onClick={handleNext}>
+                    Next
+                  </Button>
+                )}
 
-                <Button type="submit" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
-                  {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
-                </Button>
+                {/* Step 4: Participant Details */}
+                {showParticipants && (
+                  <>
+                    <div className="space-y-4 pt-4 border-t border-border">
+                      <h4 className="font-sans font-bold text-lg text-accent">4. Participant Details</h4>
+                      {participants.map((p, i) => (
+                        <Card key={i} className="border-border">
+                          <CardContent className="pt-4 space-y-3">
+                            <p className="font-semibold text-sm text-muted-foreground">Participant {i + 1}</p>
+                            <div>
+                              <Label htmlFor={`surname-name-${i}`}>Surname & Name *</Label>
+                              <Input
+                                id={`surname-name-${i}`}
+                                value={p.surnameName}
+                                onChange={e => updateParticipant(i, 'surnameName', e.target.value)}
+                                placeholder="Doe John"
+                                required
+                                maxLength={100}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`year-class-${i}`}>Year & Class *</Label>
+                              <Input
+                                id={`year-class-${i}`}
+                                value={p.yearClass}
+                                onChange={e => updateParticipant(i, 'yearClass', e.target.value)}
+                                placeholder="S5 ENA"
+                                required
+                                maxLength={20}
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor={`student-id-${i}`}>ID *</Label>
+                              <Input
+                                id={`student-id-${i}`}
+                                type="number"
+                                min={1}
+                                value={p.studentId}
+                                onChange={e => {
+                                  const val = e.target.value;
+                                  if (val === '' || /^\d+$/.test(val)) {
+                                    updateParticipant(i, 'studentId', val);
+                                  }
+                                }}
+                                placeholder="12345"
+                                required
+                              />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+
+                    <Button type="submit" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
+                      {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
+                    </Button>
+                  </>
+                )}
               </form>
             </CardContent>
           </Card>
