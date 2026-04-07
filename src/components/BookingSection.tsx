@@ -26,11 +26,12 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [groupSize, setGroupSize] = useState('');
-  const [participants, setParticipants] = useState<ParticipantInfo[]>([{ surnameName: '', yearClass: '', studentId: '' }]);
+  const [participants, setParticipants] = useState<ParticipantInfo[]>([]);
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [slotAvailability, setSlotAvailability] = useState<Record<string, number>>({});
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
 
   const loadAvailability = useCallback(async (date: string) => {
     setLoadingSlots(true);
