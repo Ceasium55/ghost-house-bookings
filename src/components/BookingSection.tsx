@@ -52,6 +52,13 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   }, [selectedDate, loadAvailability]);
 
   const handleNext = () => {
+    const missingFields: string[] = [];
+    if (!name.trim()) missingFields.push('Name');
+    if (!email.trim()) missingFields.push('Email');
+    if (missingFields.length > 0) {
+      toast({ title: 'Please insert value', description: `Missing: ${missingFields.join(', ')}`, variant: 'destructive' });
+      return;
+    }
     if (!selectedSlot) return;
     const size = parseInt(groupSize, 10);
     const available = slotAvailability[selectedSlot] ?? 0;
