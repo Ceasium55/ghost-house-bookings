@@ -323,7 +323,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                       <Button
                         type="button"
                         size="lg"
-                        className="flex-1 font-sans font-semibold tracking-wide text-lg"
+                        className="w-[20%] font-sans font-semibold tracking-wide text-lg"
                         style={{ backgroundColor: '#cdad60', color: '#1a1a2e' }}
                         onClick={() => {
                           setShowParticipants(false);
