@@ -240,8 +240,15 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                     id="groupSize"
                     type="number"
                     min={1}
+                    max={slotAvailability[selectedSlot!] ?? 1}
                     value={groupSize}
-                    onChange={e => { setGroupSize(e.target.value); setShowParticipants(false); }}
+                    onChange={e => {
+                      const val = e.target.value;
+                      if (val === '' || /^\d+$/.test(val)) {
+                        setGroupSize(val);
+                        setShowParticipants(false);
+                      }
+                    }}
                     disabled={showParticipants}
                   />
                 </div>
