@@ -333,7 +333,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                       >
                         Back
                       </Button>
-                      <Button type="submit" size="lg" className="flex-1 font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
+                      <Button type="submit" size="lg" className="w-[80%] font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
                         {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
                       </Button>
                     </div>
