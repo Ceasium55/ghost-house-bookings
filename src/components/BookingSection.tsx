@@ -323,7 +323,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                       <Button
                         type="button"
                         size="lg"
-                        className="flex-1 font-sans font-semibold tracking-wide text-lg"
+                        className="w-[20%] font-sans font-semibold tracking-wide text-lg"
                         style={{ backgroundColor: '#cdad60', color: '#1a1a2e' }}
                         onClick={() => {
                           setShowParticipants(false);
@@ -333,7 +333,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                       >
                         Back
                       </Button>
-                      <Button type="submit" size="lg" className="flex-1 font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
+                      <Button type="submit" size="lg" className="w-[80%] font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
                         {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
                       </Button>
                     </div>
