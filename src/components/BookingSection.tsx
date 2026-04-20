@@ -132,7 +132,21 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     doc.setTextColor(205, 173, 96);
     doc.text(bookingRef, 50, y + 28);
 
-    doc.save(`haunted-house-booking-${bookingRef}.pdf`);
+    const filename = `haunted-house-booking-${bookingRef}.pdf`;
+    const blob = doc.output('blob');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.rel = 'noopener';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // Fallback: open in new tab if the download was blocked by the sandboxed iframe
+    window.open(url, '_blank', 'noopener,noreferrer');
+    toast({ title: 'PDF ready', description: 'Your booking confirmation has been downloaded.' });
   };
 
   if (confirmed) {
