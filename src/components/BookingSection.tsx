@@ -59,11 +59,12 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
 
     setSubmitting(true);
+    const reference = Math.floor(10000000 + Math.random() * 90000000).toString();
     const booking = await saveBooking({
       date: selectedDate,
       timeSlot: selectedSlot,
-      name: 'Guest',
-      email: 'guest@hauntedhouse.local',
+      name: `Ref ${reference}`,
+      email: `${reference}@hauntedhouse.local`,
       phone: '',
       groupSize,
     });
@@ -74,24 +75,95 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
       return;
     }
 
+    setBookingRef(reference);
     setConfirmed(true);
     setSubmitting(false);
   };
 
+  const downloadPdf = () => {
+    if (!selectedDate || !selectedSlot) return;
+    const doc = new jsPDF({ unit: 'pt', format: 'a5' });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFillColor(26, 26, 46);
+    doc.rect(0, 0, pageWidth, 80, 'F');
+    doc.setTextColor(205, 173, 96);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.text('Haunted House', pageWidth / 2, 38, { align: 'center' });
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Booking Confirmation', pageWidth / 2, 60, { align: 'center' });
+
+    doc.setTextColor(30, 30, 30);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text('Your booking has been confirmed.', pageWidth / 2, 120, { align: 'center' });
+    doc.text('Please save this reference to manage your booking.', pageWidth / 2, 138, { align: 'center' });
+
+    let y = 190;
+    const drawRow = (label: string, value: string) => {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(110, 110, 110);
+      doc.text(label.toUpperCase(), 50, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(13);
+      doc.setTextColor(20, 20, 20);
+      doc.text(value, 50, y + 18);
+      y += 50;
+    };
+
+    drawRow('Date', formatDate(selectedDate));
+    drawRow('Time Slot', selectedSlot);
+    drawRow('Group Size', `${groupSize} person(s)`);
+
+    doc.setDrawColor(205, 173, 96);
+    doc.setLineWidth(1);
+    doc.line(50, y - 5, pageWidth - 50, y - 5);
+    y += 15;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(110, 110, 110);
+    doc.text('BOOKING REFERENCE', 50, y);
+    doc.setFont('courier', 'bold');
+    doc.setFontSize(24);
+    doc.setTextColor(205, 173, 96);
+    doc.text(bookingRef, 50, y + 28);
+
+    doc.save(`haunted-house-booking-${bookingRef}.pdf`);
+  };
+
   if (confirmed) {
     return (
-      <section className="min-h-screen flex items-center justify-center px-4">
+      <section className="min-h-screen flex items-center justify-center px-4 py-12">
         <Card className="max-w-md w-full border-primary/20">
           <CardContent className="pt-8 text-center">
             <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
             <h2 className="font-sans font-bold text-3xl text-foreground mb-2">Booking Confirmed!</h2>
-            <p className="text-muted-foreground mb-2">
+            <p className="text-muted-foreground mb-1">
               {formatDate(selectedDate!)} at {selectedSlot}
             </p>
             <p className="text-muted-foreground mb-6">
               {groupSize} person(s)
             </p>
-            <Button onClick={onBack} variant="outline">Back to Home</Button>
+
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 mb-4">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Booking Reference</p>
+              <p className="font-mono font-bold text-3xl text-primary tracking-widest">{bookingRef}</p>
+            </div>
+
+            <p className="text-sm text-accent font-semibold mb-6">
+              ⚠️ Please save this reference — you'll need it to manage your booking.
+            </p>
+
+            <div className="flex flex-col gap-2">
+              <Button onClick={downloadPdf} size="lg" className="w-full">
+                <Download className="w-4 h-4 mr-2" /> Download PDF
+              </Button>
+              <Button onClick={onBack} variant="outline">Back to Home</Button>
+            </div>
           </CardContent>
         </Card>
       </section>
