@@ -3,8 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, sendConfirmationEmail, formatDate } from '@/lib/bookingStore';
-import { Ghost, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
+import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate } from '@/lib/bookingStore';
+import { Ghost, ArrowLeft, CheckCircle, Loader2, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface BookingSectionProps {
   onBack: () => void;
