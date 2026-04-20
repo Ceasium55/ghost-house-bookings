@@ -20,6 +20,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const [submitting, setSubmitting] = useState(false);
   const [slotAvailability, setSlotAvailability] = useState<Record<string, number>>({});
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [bookingRef, setBookingRef] = useState<string>('');
 
   const loadAvailability = useCallback(async (date: string) => {
     setLoadingSlots(true);
