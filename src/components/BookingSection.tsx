@@ -133,20 +133,32 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     doc.text(bookingRef, 50, y + 28);
 
     const filename = `haunted-house-booking-${bookingRef}.pdf`;
-    const blob = doc.output('blob');
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.rel = 'noopener';
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    // Fallback: open in new tab if the download was blocked by the sandboxed iframe
-    window.open(url, '_blank', 'noopener,noreferrer');
-    toast({ title: 'PDF ready', description: 'Your booking confirmation has been downloaded.' });
+    const pdfDataUri = doc.output('datauristring');
+    const previewWindow = window.open('', '_blank');
+
+    if (!previewWindow) {
+      toast({ title: 'Popup blocked', description: 'Please allow popups to open your PDF.', variant: 'destructive' });
+      return;
+    }
+
+    previewWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>${filename}</title>
+          <style>
+            html, body { margin: 0; height: 100%; background: #111827; }
+            iframe { border: 0; width: 100%; height: 100%; }
+          </style>
+        </head>
+        <body>
+          <iframe title="${filename}" src="${pdfDataUri}"></iframe>
+        </body>
+      </html>
+    `);
+    previewWindow.document.close();
+    toast({ title: 'PDF ready', description: 'Your booking confirmation opened in a new tab.' });
   };
 
   if (confirmed) {
