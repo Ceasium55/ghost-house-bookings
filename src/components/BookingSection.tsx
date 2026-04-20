@@ -1,18 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, sendConfirmationEmail, formatDate } from '@/lib/bookingStore';
 import { Ghost, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
-
-interface ParticipantInfo {
-  surnameName: string;
-  yearClass: string;
-  studentId: string;
-}
 
 interface BookingSectionProps {
   onBack: () => void;
@@ -22,16 +14,11 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [groupSize, setGroupSize] = useState('');
-  const [participants, setParticipants] = useState<ParticipantInfo[]>([]);
+  const [groupSize, setGroupSize] = useState<number>(1);
   const [confirmed, setConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [slotAvailability, setSlotAvailability] = useState<Record<string, number>>({});
   const [loadingSlots, setLoadingSlots] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(false);
 
   const loadAvailability = useCallback(async (date: string) => {
     setLoadingSlots(true);
@@ -51,78 +38,39 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     }
   }, [selectedDate, loadAvailability]);
 
-  const handleNext = () => {
-    const missingFields: string[] = [];
-    if (!name.trim()) missingFields.push('Name');
-    if (!email.trim()) missingFields.push('Email');
-    if (missingFields.length > 0) {
-      toast({ title: 'Please insert value', description: `Missing: ${missingFields.join(', ')}`, variant: 'destructive' });
-      return;
-    }
-    if (!selectedSlot) return;
-    const size = parseInt(groupSize, 10);
-    const available = slotAvailability[selectedSlot] ?? 0;
-    if (!groupSize.trim() || isNaN(size) || size < 1 || !Number.isInteger(size) || size > available) {
-      toast({ title: 'Invalid input', description: `Please enter a whole number between 1 and ${available}.`, variant: 'destructive' });
-      return;
-    }
-    setParticipants(Array.from({ length: size }, () => ({ surnameName: '', yearClass: '', studentId: '' })));
-    setShowParticipants(true);
-  };
+  const maxAvailable = selectedSlot ? Math.min(MAX_GROUP_SIZE, slotAvailability[selectedSlot] ?? MAX_GROUP_SIZE) : MAX_GROUP_SIZE;
 
-  const updateParticipant = (index: number, field: keyof ParticipantInfo, value: string) => {
-    setParticipants(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
-  };
+  // Clamp groupSize when availability shrinks
+  useEffect(() => {
+    if (groupSize > maxAvailable) {
+      setGroupSize(Math.max(1, maxAvailable));
+    }
+  }, [maxAvailable, groupSize]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedDate || !selectedSlot) return;
 
-    const size = parseInt(groupSize, 10);
-    if (!groupSize.trim() || isNaN(size) || size < 1 || !Number.isInteger(size)) {
-      toast({ title: 'Invalid number', description: 'Group size must be a positive integer.', variant: 'destructive' });
+    if (groupSize < 1 || groupSize > maxAvailable) {
+      toast({ title: 'Invalid number', description: `Only ${maxAvailable} spot(s) available.`, variant: 'destructive' });
       return;
-    }
-
-    const available = slotAvailability[selectedSlot] ?? 0;
-    if (size > available) {
-      toast({ title: 'Invalid number', description: `Only ${available} spot(s) available for this time slot.`, variant: 'destructive' });
-      return;
-    }
-    if (!name.trim() || !email.trim()) {
-      toast({ title: 'Missing info', description: 'Please fill in your name and email.', variant: 'destructive' });
-      return;
-    }
-
-    // Validate all participants
-    for (let i = 0; i < participants.length; i++) {
-      const p = participants[i];
-      if (!p.surnameName.trim() || !p.yearClass.trim() || !p.studentId.trim()) {
-        toast({ title: 'Missing participant info', description: `Please fill in all fields for Participant ${i + 1}.`, variant: 'destructive' });
-        return;
-      }
-      if (!/^\d+$/.test(p.studentId.trim()) || parseInt(p.studentId.trim(), 10) <= 0) {
-        toast({ title: 'Invalid ID', description: `Participant ${i + 1}'s ID must be a positive integer.`, variant: 'destructive' });
-        return;
-      }
     }
 
     setSubmitting(true);
-    const booking = await saveBooking({ date: selectedDate, timeSlot: selectedSlot, name: name.trim(), email: email.trim(), phone: phone.trim(), groupSize: size });
+    const booking = await saveBooking({
+      date: selectedDate,
+      timeSlot: selectedSlot,
+      name: 'Guest',
+      email: 'guest@hauntedhouse.local',
+      phone: '',
+      groupSize,
+    });
 
     if (!booking) {
       toast({ title: 'Booking failed', description: 'Something went wrong. Please try again.', variant: 'destructive' });
       setSubmitting(false);
       return;
     }
-
-    // Send confirmation email (non-blocking)
-    sendConfirmationEmail({ name: name.trim(), email: email.trim(), date: selectedDate, timeSlot: selectedSlot, groupSize: size, bookingId: booking.id })
-      .then((sent) => {
-        if (sent) {
-          toast({ title: '📧 Confirmation email sent!', description: `Check ${email.trim()} for your booking details.` });
-        }
-      });
 
     setConfirmed(true);
     setSubmitting(false);
@@ -138,11 +86,8 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
             <p className="text-muted-foreground mb-2">
               {formatDate(selectedDate!)} at {selectedSlot}
             </p>
-            <p className="text-muted-foreground mb-2">
+            <p className="text-muted-foreground mb-6">
               {groupSize} person(s)
-            </p>
-            <p className="text-sm text-muted-foreground mb-6">
-              📧 A confirmation email has been sent to {email}
             </p>
             <Button onClick={onBack} variant="outline">Back to Home</Button>
           </CardContent>
@@ -150,6 +95,10 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
       </section>
     );
   }
+
+  const TOTAL = MAX_GROUP_SIZE;
+  const fillPct = ((groupSize - 1) / (TOTAL - 1)) * 100;
+  const disabledPct = ((TOTAL - maxAvailable) / (TOTAL - 1)) * 100;
 
   return (
     <section className="min-h-screen py-12 px-4">
@@ -169,7 +118,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
           <h3 className="font-sans font-bold text-xl text-accent mb-4">1. Choose a Date</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {EVENT_DATES.map(date => (
-              <Card 
+              <Card
                 key={date}
                 className={`cursor-pointer transition-all hover:scale-[1.02] ${selectedDate === date ? 'border-primary' : 'border-border hover:border-muted-foreground'}`}
                 onClick={() => { setSelectedDate(date); setSelectedSlot(null); }}
@@ -202,10 +151,10 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
                       disabled={isFull}
                       onClick={() => setSelectedSlot(slot)}
                       className={`relative rounded-lg p-3 text-center transition-all border ${
-                        isFull 
-                          ? 'border-border opacity-40 cursor-not-allowed' 
-                          : isSelected 
-                            ? 'border-primary bg-primary/10' 
+                        isFull
+                          ? 'border-border opacity-40 cursor-not-allowed'
+                          : isSelected
+                            ? 'border-primary bg-primary/10'
                             : 'border-border hover:border-muted-foreground'
                       }`}
                     >
@@ -221,124 +170,75 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
           </div>
         )}
 
-        {/* Step 3: Details */}
+        {/* Step 3: Group Size */}
         {selectedSlot && (
           <Card className="border-border">
             <CardHeader>
-              <CardTitle className="font-sans font-bold text-xl text-accent">3. Your Details</CardTitle>
+              <CardTitle className="font-sans font-bold text-xl text-accent">3. Group Size</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Name *</Label>
-                  <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Your name" required maxLength={100} />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required maxLength={255} />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone (optional)</Label>
-                  <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+32 ..." maxLength={20} />
-                </div>
-                <div>
-                  <Label htmlFor="groupSize">Group Size</Label>
-                  <Input
-                    id="groupSize"
-                    type="number"
-                    min={1}
-                    max={slotAvailability[selectedSlot!] ?? 1}
-                    value={groupSize}
-                    onChange={e => {
-                      const val = e.target.value;
-                      if (val === '' || /^\d+$/.test(val)) {
-                        setGroupSize(val);
-                        setShowParticipants(false);
-                      }
-                    }}
-                    disabled={showParticipants}
-                  />
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="text-center">
+                  <p className="text-muted-foreground text-sm mb-2">How many people in your group?</p>
+                  <p className="font-sans font-bold text-5xl text-primary">{groupSize}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Max available for this slot: {maxAvailable}
+                  </p>
                 </div>
 
-                {!showParticipants && (
-                  <Button type="button" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" onClick={handleNext}>
-                    Next
-                  </Button>
-                )}
-
-                {/* Step 4: Participant Details */}
-                {showParticipants && (
-                  <>
-                    <div className="space-y-4 pt-4 border-t border-border">
-                      <h4 className="font-sans font-bold text-lg text-accent">4. Participant Details</h4>
-                      {participants.map((p, i) => (
-                        <Card key={i} className="border-border">
-                          <CardContent className="pt-4 space-y-3">
-                            <p className="font-semibold text-sm text-muted-foreground">Participant {i + 1}</p>
-                            <div>
-                              <Label htmlFor={`surname-name-${i}`}>Surname & Name *</Label>
-                              <Input
-                                id={`surname-name-${i}`}
-                                value={p.surnameName}
-                                onChange={e => updateParticipant(i, 'surnameName', e.target.value)}
-                                placeholder="Doe John"
-                                required
-                                maxLength={100}
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor={`year-class-${i}`}>Year & Class *</Label>
-                              <Input
-                                id={`year-class-${i}`}
-                                value={p.yearClass}
-                                onChange={e => updateParticipant(i, 'yearClass', e.target.value)}
-                                placeholder="S5 ENA"
-                                required
-                                maxLength={20}
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor={`student-id-${i}`}>ID *</Label>
-                              <Input
-                                id={`student-id-${i}`}
-                                type="number"
-                                min={1}
-                                value={p.studentId}
-                                onChange={e => {
-                                  const val = e.target.value;
-                                  if (val === '' || /^\d+$/.test(val)) {
-                                    updateParticipant(i, 'studentId', val);
-                                  }
-                                }}
-                                placeholder="12345"
-                                required
-                              />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-
-                    <div className="flex gap-3">
-                      <Button
-                        type="button"
-                        size="lg"
-                        className="w-[20%] font-sans font-semibold tracking-wide text-lg"
-                        style={{ backgroundColor: '#cdad60', color: '#1a1a2e' }}
-                        onClick={() => {
-                          setShowParticipants(false);
-                          setGroupSize('');
-                          setParticipants([]);
-                        }}
+                {/* Custom slider */}
+                <div className="px-2 pt-4 pb-2">
+                  <div className="relative h-3 w-full">
+                    {/* Base track */}
+                    <div className="absolute inset-0 rounded-full bg-secondary" />
+                    {/* Disabled (greyed) portion on the right */}
+                    {disabledPct > 0 && (
+                      <div
+                        className="absolute top-0 right-0 h-full rounded-r-full bg-muted-foreground/30"
+                        style={{ width: `${disabledPct}%` }}
+                      />
+                    )}
+                    {/* Filled portion */}
+                    <div
+                      className="absolute top-0 left-0 h-full rounded-l-full bg-primary transition-all"
+                      style={{ width: `${fillPct}%` }}
+                    />
+                    {/* Native range input on top */}
+                    <input
+                      type="range"
+                      min={1}
+                      max={TOTAL}
+                      step={1}
+                      value={groupSize}
+                      onChange={e => {
+                        const val = parseInt(e.target.value, 10);
+                        if (val <= maxAvailable) setGroupSize(val);
+                        else setGroupSize(maxAvailable);
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                      aria-label="Group size"
+                    />
+                    {/* Thumb indicator */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-5 w-5 rounded-full border-2 border-primary bg-background pointer-events-none transition-all"
+                      style={{ left: `${fillPct}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between mt-3 text-xs font-mono text-muted-foreground">
+                    {Array.from({ length: TOTAL }, (_, i) => i + 1).map(n => (
+                      <span
+                        key={n}
+                        className={n > maxAvailable ? 'opacity-40' : n === groupSize ? 'text-primary font-bold' : ''}
                       >
-                        Back
-                      </Button>
-                      <Button type="submit" size="lg" className="w-[80%] font-sans font-semibold tracking-wide text-lg" disabled={submitting}>
-                        {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
-                      </Button>
-                    </div>
-                  </>
-                )}
+                        {n}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <Button type="submit" size="lg" className="w-full font-sans font-semibold tracking-wide text-lg" disabled={submitting || maxAvailable < 1}>
+                  {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking...</> : 'Confirm Booking'}
+                </Button>
               </form>
             </CardContent>
           </Card>
