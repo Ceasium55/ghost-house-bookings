@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate, type Activity } from '@/lib/bookingStore';
-import { Ghost, ArrowLeft, CheckCircle, Loader2, Download } from 'lucide-react';
+import { KeyRound, ArrowLeft, CheckCircle, Loader2, Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
 interface BookingSectionProps {
@@ -211,7 +211,7 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
         </button>
 
         <div className="text-center mb-10">
-          <Ghost className="w-10 h-10 text-primary mx-auto mb-3 animate-float" />
+          <KeyRound className="w-10 h-10 text-primary mx-auto mb-3 animate-float" />
           <h2 className="font-sans font-bold text-4xl md:text-5xl text-foreground mb-2">{title}</h2>
           <p className="text-muted-foreground">Choose your date and time — each tour lasts 15 minutes</p>
         </div>
