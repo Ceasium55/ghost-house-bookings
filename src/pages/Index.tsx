@@ -15,7 +15,7 @@ const Index = () => {
           <HeroSection onBookNow={() => setView('booking')} onBack={() => navigate('/')} />
         </>
       ) : (
-        <BookingSection onBack={() => setView('hero')} />
+        <BookingSection onBack={() => setView('hero')} activity="haunted-house" title="Book Your Haunted House Tour" />
       )}
 
       <footer className="text-center py-6 border-t border-border">

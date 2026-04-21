@@ -63,7 +63,7 @@ const EscapeRoom = () => {
           </div>
         </section>
       ) : (
-        <BookingSection onBack={() => setView('hero')} />
+        <BookingSection onBack={() => setView('hero')} activity="escape-room" title="Book Your Escape Room Session" />
       )}
 
       <footer className="text-center py-6 border-t border-border mt-auto">
