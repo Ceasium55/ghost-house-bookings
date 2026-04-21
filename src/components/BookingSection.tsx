@@ -79,15 +79,25 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
     }
 
     setBookingRef(reference);
-    setTicketImage(generateTicketImage(reference, selectedDate, selectedSlot, groupSize));
+    const img = await generateTicketImage(reference, selectedDate, selectedSlot, groupSize);
+    setTicketImage(img);
     setConfirmed(true);
     setSubmitting(false);
   };
 
-  const generateTicketImage = (reference: string, date: string, slot: string, size: number): string => {
+  const loadImage = (src: string): Promise<HTMLImageElement | null> =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+
+  const generateTicketImage = async (reference: string, date: string, slot: string, size: number): Promise<string> => {
     const scale = 2; // hi-DPI
     const W = 600;
-    const H = 800;
+    const H = 900;
     const canvas = document.createElement('canvas');
     canvas.width = W * scale;
     canvas.height = H * scale;
@@ -99,23 +109,34 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
     ctx.fillRect(0, 0, W, H);
 
     // Header band
+    const headerH = 240;
     ctx.fillStyle = '#1a1a2e';
-    ctx.fillRect(0, 0, W, 140);
+    ctx.fillRect(0, 0, W, headerH);
+
+    // Logo
+    const logo = await loadImage('/images/sf26-bg.png');
+    if (logo) {
+      const maxLogoH = 120;
+      const ratio = logo.width / logo.height;
+      const logoH = maxLogoH;
+      const logoW = logoH * ratio;
+      ctx.drawImage(logo, (W - logoW) / 2, 20, logoW, logoH);
+    }
 
     ctx.fillStyle = '#cdad60';
     ctx.font = 'bold 38px Georgia, serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Haunted House', W / 2, 70);
+    ctx.fillText('Haunted House', W / 2, 175);
 
     ctx.fillStyle = '#e8e8e8';
     ctx.font = '18px Helvetica, Arial, sans-serif';
-    ctx.fillText('Booking Confirmation', W / 2, 105);
+    ctx.fillText('Booking Confirmation', W / 2, 210);
 
     // Body intro
     ctx.fillStyle = '#cccccc';
     ctx.font = '16px Helvetica, Arial, sans-serif';
-    ctx.fillText('Your booking has been confirmed.', W / 2, 200);
-    ctx.fillText('Save this image — long-press or right-click to download.', W / 2, 226);
+    ctx.fillText('Your booking has been confirmed.', W / 2, 295);
+    ctx.fillText('Save this image — long-press or right-click to download.', W / 2, 321);
 
     // Detail rows
     const drawRow = (label: string, value: string, y: number) => {
@@ -128,31 +149,31 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
       ctx.fillText(value, 60, y + 26);
     };
 
-    drawRow('Date', formatDate(date), 290);
-    drawRow('Time Slot', slot, 360);
-    drawRow('Group Size', `${size} person(s)`, 430);
+    drawRow('Date', formatDate(date), 385);
+    drawRow('Time Slot', slot, 455);
+    drawRow('Group Size', `${size} person(s)`, 525);
 
     // Divider
     ctx.strokeStyle = '#cdad60';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(60, 500);
-    ctx.lineTo(W - 60, 500);
+    ctx.moveTo(60, 595);
+    ctx.lineTo(W - 60, 595);
     ctx.stroke();
 
     // Reference
     ctx.fillStyle = '#999999';
     ctx.font = 'bold 13px Helvetica, Arial, sans-serif';
-    ctx.fillText('BOOKING REFERENCE', 60, 540);
+    ctx.fillText('BOOKING REFERENCE', 60, 635);
     ctx.fillStyle = '#cdad60';
     ctx.font = 'bold 48px "Courier New", monospace';
-    ctx.fillText(reference, 60, 600);
+    ctx.fillText(reference, 60, 695);
 
     // Footer note
     ctx.fillStyle = '#888888';
     ctx.font = '13px Helvetica, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Please present this reference at the entrance.', W / 2, 740);
+    ctx.fillText('Please present this reference at the entrance.', W / 2, 840);
 
     return canvas.toDataURL('image/png');
   };
