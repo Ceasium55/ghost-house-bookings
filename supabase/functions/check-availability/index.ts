@@ -23,22 +23,24 @@ serve(async (req) => {
   }
 
   try {
-    const { date, timeSlot, activity } = await req.json();
+    const body = await req.json();
+    const { date, timeSlot, activity } = body;
+    console.log('check-availability request:', JSON.stringify(body));
 
     if (!activity || !VALID_ACTIVITIES.includes(activity)) {
-      return new Response(JSON.stringify({ error: 'Invalid activity' }), {
+      return new Response(JSON.stringify({ error: 'Invalid activity', received: activity }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     if (!date || !VALID_DATES.includes(date)) {
-      return new Response(JSON.stringify({ error: 'Invalid date' }), {
+      return new Response(JSON.stringify({ error: 'Invalid date', received: date }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     if (!timeSlot || !VALID_TIME_SLOTS.includes(timeSlot)) {
-      return new Response(JSON.stringify({ error: 'Invalid time slot' }), {
+      return new Response(JSON.stringify({ error: 'Invalid time slot', received: timeSlot }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
