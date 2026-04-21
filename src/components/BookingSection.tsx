@@ -4,8 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate, type Activity } from '@/lib/bookingStore';
-import { KeyRound, ArrowLeft, CheckCircle, Loader2, Download } from 'lucide-react';
-import { jsPDF } from 'jspdf';
+import { KeyRound, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 
 interface BookingSectionProps {
   onBack: () => void;
@@ -23,6 +22,7 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
   const [slotAvailability, setSlotAvailability] = useState<Record<string, number>>({});
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [bookingRef, setBookingRef] = useState<string>('');
+  const [ticketImage, setTicketImage] = useState<string>('');
 
   const loadAvailability = useCallback(async (date: string) => {
     setLoadingSlots(true);
@@ -79,89 +79,82 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
     }
 
     setBookingRef(reference);
+    setTicketImage(generateTicketImage(reference, selectedDate, selectedSlot, groupSize));
     setConfirmed(true);
     setSubmitting(false);
   };
 
-  const downloadPdf = () => {
-    if (!selectedDate || !selectedSlot) return;
-    const doc = new jsPDF({ unit: 'pt', format: 'a5' });
-    const pageWidth = doc.internal.pageSize.getWidth();
+  const generateTicketImage = (reference: string, date: string, slot: string, size: number): string => {
+    const scale = 2; // hi-DPI
+    const W = 600;
+    const H = 800;
+    const canvas = document.createElement('canvas');
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    const ctx = canvas.getContext('2d')!;
+    ctx.scale(scale, scale);
 
-    doc.setFillColor(26, 26, 46);
-    doc.rect(0, 0, pageWidth, 80, 'F');
-    doc.setTextColor(205, 173, 96);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text('Haunted House', pageWidth / 2, 38, { align: 'center' });
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Booking Confirmation', pageWidth / 2, 60, { align: 'center' });
+    // Background
+    ctx.fillStyle = '#0f0f1a';
+    ctx.fillRect(0, 0, W, H);
 
-    doc.setTextColor(30, 30, 30);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
-    doc.text('Your booking has been confirmed.', pageWidth / 2, 120, { align: 'center' });
-    doc.text('Please save this reference to manage your booking.', pageWidth / 2, 138, { align: 'center' });
+    // Header band
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, W, 140);
 
-    let y = 190;
-    const drawRow = (label: string, value: string) => {
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.setTextColor(110, 110, 110);
-      doc.text(label.toUpperCase(), 50, y);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(13);
-      doc.setTextColor(20, 20, 20);
-      doc.text(value, 50, y + 18);
-      y += 50;
+    ctx.fillStyle = '#cdad60';
+    ctx.font = 'bold 38px Georgia, serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Haunted House', W / 2, 70);
+
+    ctx.fillStyle = '#e8e8e8';
+    ctx.font = '18px Helvetica, Arial, sans-serif';
+    ctx.fillText('Booking Confirmation', W / 2, 105);
+
+    // Body intro
+    ctx.fillStyle = '#cccccc';
+    ctx.font = '16px Helvetica, Arial, sans-serif';
+    ctx.fillText('Your booking has been confirmed.', W / 2, 200);
+    ctx.fillText('Save this image — long-press or right-click to download.', W / 2, 226);
+
+    // Detail rows
+    const drawRow = (label: string, value: string, y: number) => {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#999999';
+      ctx.font = 'bold 13px Helvetica, Arial, sans-serif';
+      ctx.fillText(label.toUpperCase(), 60, y);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '20px Helvetica, Arial, sans-serif';
+      ctx.fillText(value, 60, y + 26);
     };
 
-    drawRow('Date', formatDate(selectedDate));
-    drawRow('Time Slot', selectedSlot);
-    drawRow('Group Size', `${groupSize} person(s)`);
+    drawRow('Date', formatDate(date), 290);
+    drawRow('Time Slot', slot, 360);
+    drawRow('Group Size', `${size} person(s)`, 430);
 
-    doc.setDrawColor(205, 173, 96);
-    doc.setLineWidth(1);
-    doc.line(50, y - 5, pageWidth - 50, y - 5);
-    y += 15;
+    // Divider
+    ctx.strokeStyle = '#cdad60';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(60, 500);
+    ctx.lineTo(W - 60, 500);
+    ctx.stroke();
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(110, 110, 110);
-    doc.text('BOOKING REFERENCE', 50, y);
-    doc.setFont('courier', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(205, 173, 96);
-    doc.text(bookingRef, 50, y + 28);
+    // Reference
+    ctx.fillStyle = '#999999';
+    ctx.font = 'bold 13px Helvetica, Arial, sans-serif';
+    ctx.fillText('BOOKING REFERENCE', 60, 540);
+    ctx.fillStyle = '#cdad60';
+    ctx.font = 'bold 48px "Courier New", monospace';
+    ctx.fillText(reference, 60, 600);
 
-    const filename = `haunted-house-booking-${bookingRef}.pdf`;
-    const pdfDataUri = doc.output('datauristring');
-    const previewWindow = window.open('', '_blank');
+    // Footer note
+    ctx.fillStyle = '#888888';
+    ctx.font = '13px Helvetica, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Please present this reference at the entrance.', W / 2, 740);
 
-    if (!previewWindow) {
-      toast({ title: 'Popup blocked', description: 'Please allow popups to open your PDF.', variant: 'destructive' });
-      return;
-    }
-
-    previewWindow.document.write(`
-      <!doctype html>
-      <html>
-        <head>
-          <meta charset="utf-8" />
-          <title>${filename}</title>
-          <style>
-            html, body { margin: 0; height: 100%; background: #111827; }
-            iframe { border: 0; width: 100%; height: 100%; }
-          </style>
-        </head>
-        <body>
-          <iframe title="${filename}" src="${pdfDataUri}"></iframe>
-        </body>
-      </html>
-    `);
-    previewWindow.document.close();
-    toast({ title: 'PDF ready', description: 'Your booking confirmation opened in a new tab.' });
+    return canvas.toDataURL('image/png');
   };
 
   if (confirmed) {
@@ -187,10 +180,20 @@ const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingS
               ⚠️ Please save this reference — you'll need it to manage your booking.
             </p>
 
+            {ticketImage && (
+              <div className="mb-4">
+                <img
+                  src={ticketImage}
+                  alt={`Booking confirmation ${bookingRef}`}
+                  className="w-full rounded-lg border border-primary/30"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  Right-click (or long-press on mobile) the image to save it.
+                </p>
+              </div>
+            )}
+
             <div className="flex flex-col gap-2">
-              <Button onClick={downloadPdf} size="lg" className="w-full">
-                <Download className="w-4 h-4 mr-2" /> Download PDF
-              </Button>
               <Button onClick={onBack} variant="outline">Back to Home</Button>
             </div>
           </CardContent>
