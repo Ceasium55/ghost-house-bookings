@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate } from '@/lib/bookingStore';
+import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate, type Activity } from '@/lib/bookingStore';
 import { Ghost, ArrowLeft, CheckCircle, Loader2, Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
