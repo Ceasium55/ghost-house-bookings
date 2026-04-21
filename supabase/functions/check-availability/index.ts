@@ -15,6 +15,7 @@ const VALID_TIME_SLOTS = [
   '14:00', '14:20', '14:40',
 ];
 const MAX_GROUP_SIZE = 6;
+const VALID_ACTIVITIES = ['haunted-house', 'escape-room', 'games'];
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -22,7 +23,13 @@ serve(async (req) => {
   }
 
   try {
-    const { date, timeSlot } = await req.json();
+    const { date, timeSlot, activity } = await req.json();
+
+    if (!activity || !VALID_ACTIVITIES.includes(activity)) {
+      return new Response(JSON.stringify({ error: 'Invalid activity' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     if (!date || !VALID_DATES.includes(date)) {
       return new Response(JSON.stringify({ error: 'Invalid date' }), {
@@ -43,6 +50,7 @@ serve(async (req) => {
     const { data, error } = await supabase
       .from('bookings')
       .select('group_size')
+      .eq('activity', activity)
       .eq('date', date)
       .eq('time_slot', timeSlot);
 

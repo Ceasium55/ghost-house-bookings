@@ -15,6 +15,7 @@ const VALID_TIME_SLOTS = [
   '14:00', '14:20', '14:40',
 ];
 const MAX_GROUP_SIZE = 6;
+const VALID_ACTIVITIES = ['haunted-house', 'escape-room', 'games'];
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -23,11 +24,18 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { date, timeSlot, name, email, phone, groupSize } = body;
+    const { date, timeSlot, name, email, phone, groupSize, activity } = body;
 
     // Validate required fields
     if (!date || !timeSlot || !name || !email) {
       return new Response(JSON.stringify({ error: 'Missing required fields (date, timeSlot, name, email)' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Validate activity
+    if (!activity || !VALID_ACTIVITIES.includes(activity)) {
+      return new Response(JSON.stringify({ error: 'Invalid activity. Must be haunted-house, escape-room, or games.' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -84,10 +92,11 @@ serve(async (req) => {
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Check slot availability
+    // Check slot availability for this activity
     const { data: existing, error: fetchError } = await supabase
       .from('bookings')
       .select('group_size')
+      .eq('activity', activity)
       .eq('date', date)
       .eq('time_slot', timeSlot);
 
@@ -111,6 +120,7 @@ serve(async (req) => {
     const { data: booking, error: insertError } = await supabase
       .from('bookings')
       .insert({
+        activity,
         date,
         time_slot: timeSlot,
         name: trimmedName,

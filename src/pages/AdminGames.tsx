@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { getBookings, deleteBooking, formatDate, EVENT_DATES, TIME_SLOTS, getSlotAvailability, MAX_GROUP_SIZE, type Booking } from '@/lib/bookingStore';
+
+const ACTIVITY = 'games' as const;
 import { Gamepad2, Trash2, ArrowLeft, Users, Calendar, Loader2, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,7 +21,7 @@ const AdminGames = () => {
   const [deleteTarget, setDeleteTarget] = useState<Booking | null>(null);
   const loadData = async () => {
     setLoading(true);
-    const data = await getBookings();
+    const data = await getBookings(ACTIVITY);
     setBookings(data);
 
     const avail: Record<string, Record<string, number>> = {};
@@ -28,7 +30,7 @@ const AdminGames = () => {
         avail[date] = {};
         await Promise.all(
           TIME_SLOTS.map(async (slot) => {
-            avail[date][slot] = await getSlotAvailability(date, slot);
+            avail[date][slot] = await getSlotAvailability(ACTIVITY, date, slot);
           })
         );
       })

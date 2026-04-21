@@ -3,15 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate } from '@/lib/bookingStore';
+import { TIME_SLOTS, EVENT_DATES, MAX_GROUP_SIZE, getSlotAvailability, saveBooking, formatDate, type Activity } from '@/lib/bookingStore';
 import { Ghost, ArrowLeft, CheckCircle, Loader2, Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
 interface BookingSectionProps {
   onBack: () => void;
+  activity: Activity;
+  title?: string;
 }
 
-const BookingSection = ({ onBack }: BookingSectionProps) => {
+const BookingSection = ({ onBack, activity, title = 'Book Your Tour' }: BookingSectionProps) => {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -27,12 +29,12 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     const availability: Record<string, number> = {};
     await Promise.all(
       TIME_SLOTS.map(async (slot) => {
-        availability[slot] = await getSlotAvailability(date, slot);
+        availability[slot] = await getSlotAvailability(activity, date, slot);
       })
     );
     setSlotAvailability(availability);
     setLoadingSlots(false);
-  }, []);
+  }, [activity]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -61,6 +63,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
     setSubmitting(true);
     const reference = Math.floor(10000000 + Math.random() * 90000000).toString();
     const booking = await saveBooking({
+      activity,
       date: selectedDate,
       timeSlot: selectedSlot,
       name: `Ref ${reference}`,
@@ -209,7 +212,7 @@ const BookingSection = ({ onBack }: BookingSectionProps) => {
 
         <div className="text-center mb-10">
           <Ghost className="w-10 h-10 text-primary mx-auto mb-3 animate-float" />
-          <h2 className="font-sans font-bold text-4xl md:text-5xl text-foreground mb-2">Book Your Tour</h2>
+          <h2 className="font-sans font-bold text-4xl md:text-5xl text-foreground mb-2">{title}</h2>
           <p className="text-muted-foreground">Choose your date and time — each tour lasts 15 minutes</p>
         </div>
 

@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
+export type Activity = 'haunted-house' | 'escape-room' | 'games';
+
 export interface Booking {
   id: string;
   date: string;
@@ -8,6 +10,7 @@ export interface Booking {
   email: string;
   phone: string;
   group_size: number;
+  activity: Activity;
   created_at: string;
 }
 
@@ -23,23 +26,26 @@ export const TIME_SLOTS = [
 export const EVENT_DATES = ['2026-05-07', '2026-05-08'];
 export const MAX_GROUP_SIZE = 6;
 
-export async function getBookings(): Promise<Booking[]> {
-  const { data, error } = await supabase
+export async function getBookings(activity?: Activity): Promise<Booking[]> {
+  let query = supabase
     .from('bookings')
     .select('*')
     .order('date', { ascending: true })
     .order('time_slot', { ascending: true });
+  if (activity) query = query.eq('activity', activity);
+  const { data, error } = await query;
   if (error) {
     console.error('Error fetching bookings:', error);
     return [];
   }
-  return data || [];
+  return (data || []) as Booking[];
 }
 
-export async function saveBooking(booking: { date: string; timeSlot: string; name: string; email: string; phone: string; groupSize: number }): Promise<Booking | null> {
+export async function saveBooking(booking: { activity: Activity; date: string; timeSlot: string; name: string; email: string; phone: string; groupSize: number }): Promise<Booking | null> {
   try {
     const { data, error } = await supabase.functions.invoke('create-booking', {
       body: {
+        activity: booking.activity,
         date: booking.date,
         timeSlot: booking.timeSlot,
         name: booking.name,
@@ -66,10 +72,10 @@ export async function deleteBooking(id: string): Promise<void> {
   if (error) console.error('Error deleting booking:', error);
 }
 
-export async function getSlotAvailability(date: string, timeSlot: string): Promise<number> {
+export async function getSlotAvailability(activity: Activity, date: string, timeSlot: string): Promise<number> {
   try {
     const { data, error } = await supabase.functions.invoke('check-availability', {
-      body: { date, timeSlot },
+      body: { activity, date, timeSlot },
     });
     if (error) {
       console.error('Error checking availability:', error);

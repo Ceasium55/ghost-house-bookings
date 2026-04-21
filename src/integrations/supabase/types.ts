@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       bookings: {
         Row: {
+          activity: string
           created_at: string
           date: string
           email: string
@@ -26,6 +27,7 @@ export type Database = {
           time_slot: string
         }
         Insert: {
+          activity?: string
           created_at?: string
           date: string
           email: string
@@ -36,6 +38,7 @@ export type Database = {
           time_slot: string
         }
         Update: {
+          activity?: string
           created_at?: string
           date?: string
           email?: string
