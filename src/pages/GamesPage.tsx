@@ -27,6 +27,11 @@ const GamesPage = () => {
         <a href="/admin" className="text-xs text-primary-foreground font-medium mt-2 inline-block px-3 py-1 rounded-md bg-[#cdad60] hover:bg-[#b89a50] transition-colors">
           Manager access
         </a>
+        <div>
+          <a href="/credits" className="text-[10.2px] text-primary-foreground font-medium mt-2 inline-block px-[10.2px] py-[3.4px] rounded-md bg-[#cdad60] hover:bg-[#b89a50] transition-colors">
+            Credits
+          </a>
+        </div>
       </footer>
     </div>
   );
