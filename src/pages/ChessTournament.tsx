@@ -1,32 +1,75 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Crown, ArrowLeft, CheckCircle, ExternalLink } from 'lucide-react';
+import { Crown, ArrowLeft, CheckCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-
-type Category = { id: 's1-s3'; label: 'S1 - S3' } | { id: 's4-s7'; label: 'S4 - S7' };
-
-const CATEGORIES: Category[] = [
-  { id: 's1-s3', label: 'S1 - S3' },
-  { id: 's4-s7', label: 'S4 - S7' },
-];
+import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import {
+  CHESS_CATEGORIES,
+  CHESS_CATEGORY_CAPACITY,
+  getChessAvailability,
+  registerChess,
+  type ChessCategory,
+} from '@/lib/chessStore';
 
 const OPPONENT_FORM_URL = 'https://forms.cloud.microsoft/e/3mBz2aNNBN';
 
 const ChessTournament = () => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<Category | null>(null);
-  const [tournamentId, setTournamentId] = useState<string>('');
+  const { toast } = useToast();
 
-  const handleSelect = (cat: Category) => {
-    const id = Math.floor(1000000 + Math.random() * 9000000).toString();
-    setTournamentId(id);
-    setSelected(cat);
+  const [availability, setAvailability] = useState<Record<ChessCategory, { taken: number; available: number; capacity: number }> | null>(null);
+  const [pending, setPending] = useState<ChessCategory | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [confirmed, setConfirmed] = useState<{ tournamentId: string; category: ChessCategory } | null>(null);
+
+  const loadAvailability = async () => {
+    const data = await getChessAvailability();
+    setAvailability(data);
   };
+
+  useEffect(() => { loadAvailability(); }, []);
+
+  const handleConfirm = async () => {
+    if (!pending) return;
+    setSubmitting(true);
+    const result = await registerChess(pending);
+    setSubmitting(false);
+
+    if (result.full) {
+      toast({ title: 'Category is full', description: 'No spots remaining in this category.', variant: 'destructive' });
+      setPending(null);
+      await loadAvailability();
+      return;
+    }
+    if (result.error || !result.registration) {
+      toast({ title: 'Registration failed', description: 'Please try again.', variant: 'destructive' });
+      setPending(null);
+      return;
+    }
+
+    setConfirmed({ tournamentId: result.registration.tournament_id, category: pending });
+    setPending(null);
+    await loadAvailability();
+  };
+
+  const pendingLabel = pending ? CHESS_CATEGORIES.find(c => c.id === pending)?.label : '';
+  const confirmedLabel = confirmed ? CHESS_CATEGORIES.find(c => c.id === confirmed.category)?.label : '';
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!selected ? (
+      {!confirmed ? (
         <section className="flex-1 flex flex-col items-center justify-center px-4 py-12">
           <Crown className="w-16 h-16 text-secondary mb-6 animate-float" />
           <h1 className="font-sans font-bold text-5xl md:text-7xl tracking-tight text-foreground mb-4 text-center">
@@ -37,18 +80,32 @@ const ChessTournament = () => {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
-            {CATEGORIES.map((cat) => (
-              <Card
-                key={cat.id}
-                className="cursor-pointer transition-all hover:scale-[1.03] hover:border-secondary border-border"
-                onClick={() => handleSelect(cat)}
-              >
-                <CardContent className="py-10 text-center">
-                  <p className="font-sans font-bold text-3xl text-foreground mb-2">{cat.label}</p>
-                  <p className="text-tertiary text-sm">Capacity: 16 people</p>
-                </CardContent>
-              </Card>
-            ))}
+            {CHESS_CATEGORIES.map((cat) => {
+              const slot = availability?.[cat.id];
+              const isFull = slot ? slot.available <= 0 : false;
+              return (
+                <Card
+                  key={cat.id}
+                  className={`transition-all border-border ${
+                    isFull
+                      ? 'opacity-60 cursor-not-allowed'
+                      : 'cursor-pointer hover:scale-[1.03] hover:border-secondary'
+                  }`}
+                  onClick={() => !isFull && setPending(cat.id)}
+                >
+                  <CardContent className="py-10 text-center">
+                    <p className="font-sans font-bold text-3xl text-foreground mb-3">{cat.label}</p>
+                    {availability ? (
+                      <Badge variant={isFull ? 'destructive' : 'secondary'}>
+                        {isFull ? 'Full' : `${slot!.available}/${slot!.capacity} spots left`}
+                      </Badge>
+                    ) : (
+                      <p className="text-tertiary text-sm">Capacity: {CHESS_CATEGORY_CAPACITY} people</p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           <Button
@@ -67,12 +124,12 @@ const ChessTournament = () => {
               <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
               <h2 className="font-sans font-bold text-3xl text-foreground mb-2">You're Registered!</h2>
               <p className="text-muted-foreground mb-6">
-                Category: <span className="text-foreground font-semibold">{selected.label}</span>
+                Category: <span className="text-foreground font-semibold">{confirmedLabel}</span>
               </p>
 
               <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 mb-6">
                 <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">Tournament ID</p>
-                <p className="font-mono font-bold text-4xl text-primary tracking-widest">{tournamentId}</p>
+                <p className="font-mono font-bold text-4xl text-primary tracking-widest">{confirmed.tournamentId}</p>
               </div>
 
               <p className="text-sm text-accent font-semibold mb-6">
@@ -95,6 +152,24 @@ const ChessTournament = () => {
           </Card>
         </section>
       )}
+
+      <AlertDialog open={!!pending} onOpenChange={(open) => !open && !submitting && setPending(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm your category</AlertDialogTitle>
+            <AlertDialogDescription>
+              You're about to register for the <span className="text-foreground font-semibold">{pendingLabel}</span> category.
+              This will reserve one of the {CHESS_CATEGORY_CAPACITY} available spots and generate your Tournament ID.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={submitting}>Go back</AlertDialogCancel>
+            <AlertDialogAction onClick={(e) => { e.preventDefault(); handleConfirm(); }} disabled={submitting}>
+              {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Registering...</> : 'Confirm'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <footer className="text-center py-6 border-t border-border">
         <p className="text-tertiary text-sm">Springfest 2026 - The Great Exhibition</p>
