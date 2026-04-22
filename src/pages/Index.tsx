@@ -20,7 +20,7 @@ const Index = () => {
 
       <footer className="text-center py-6 border-t border-border">
         <p className="text-tertiary text-sm">
-          SESE Ghost House — School Festival Brussels 2026
+          Springfest 2026 - The Great Exhibition
         </p>
         <a href="/admin" className="text-xs text-primary-foreground font-medium mt-2 inline-block px-3 py-1 rounded-md bg-[#cdad60] hover:bg-[#b89a50] transition-colors">
           Manager access
