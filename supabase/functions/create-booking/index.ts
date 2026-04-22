@@ -15,6 +15,11 @@ const VALID_TIME_SLOTS = [
   '14:00', '14:20', '14:40',
 ];
 const MAX_GROUP_SIZE = 6;
+const SLOT_CAPACITY: Record<string, number> = {
+  'haunted-house': 6,
+  'escape-room': 18,
+  'games': 6,
+};
 const VALID_ACTIVITIES = ['haunted-house', 'escape-room', 'games'];
 
 serve(async (req) => {
