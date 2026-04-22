@@ -50,6 +50,27 @@ export type Database = {
         }
         Relationships: []
       }
+      chess_registrations: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          tournament_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          tournament_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          tournament_id?: string
+        }
+        Relationships: []
+      }
       escape_room_admins: {
         Row: {
           created_at: string
