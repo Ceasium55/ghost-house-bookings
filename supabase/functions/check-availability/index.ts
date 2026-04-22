@@ -68,7 +68,7 @@ serve(async (req) => {
     }
 
     const totalBooked = (data || []).reduce((sum: number, b: { group_size: number }) => sum + b.group_size, 0);
-    const available = MAX_GROUP_SIZE - totalBooked;
+    const available = (SLOT_CAPACITY[activity] ?? 6) - totalBooked;
 
     return new Response(JSON.stringify({ available }), {
       status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
