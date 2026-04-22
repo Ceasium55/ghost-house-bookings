@@ -9,8 +9,11 @@ import { BookKey, ArrowLeft, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
+const USERNAME_DOMAIN = '@admin.local';
+const usernameToEmail = (u: string) => `${u.trim().toLowerCase()}${USERNAME_DOMAIN}`;
+
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -21,12 +24,13 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
+    const email = usernameToEmail(username);
+
     try {
       if (isSignUp) {
-        // Check admin access before allowing signup
         const allowed = await isAnyAdmin(email);
         if (!allowed) {
-          toast({ title: 'Access denied', description: 'This email is not authorized for admin access.', variant: 'destructive' });
+          toast({ title: 'Access denied', description: 'This username is not authorized for admin access.', variant: 'destructive' });
           setLoading(false);
           return;
         }
@@ -37,11 +41,10 @@ const AdminLogin = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        // Check admin access after login
         const allowed = await isAnyAdmin(email);
         if (!allowed) {
           await supabase.auth.signOut();
-          toast({ title: 'Access denied', description: 'This email is not authorized for admin access.', variant: 'destructive' });
+          toast({ title: 'Access denied', description: 'This username is not authorized for admin access.', variant: 'destructive' });
           setLoading(false);
           return;
         }
@@ -69,10 +72,12 @@ const AdminLogin = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
-                type="email"
-                placeholder="Admin email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoCapitalize="none"
+                autoCorrect="off"
                 required
               />
               <Input
@@ -94,7 +99,7 @@ const AdminLogin = () => {
                 </button>
               </p>
               <p className="text-center text-sm text-muted-foreground mt-2">
-                Note: only pre-authorised e-mails may access. Contact IT Team in case of issue.
+                Note: only pre-authorised usernames may access. Contact IT Team in case of issue.
               </p>
             </form>
           </CardContent>
