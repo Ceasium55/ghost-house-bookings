@@ -18,6 +18,7 @@ import HauntedHouse from "./pages/Index";
 import EscapeRoom from "./pages/EscapeRoom";
 import GamesPage from "./pages/GamesPage";
 import ChessTournament from "./pages/ChessTournament";
+import Credits from "./pages/Credits";
 import AdminHub from "./pages/AdminHub";
 import AdminPage from "./pages/AdminPage";
 import AdminEscapeRoom from "./pages/AdminEscapeRoom";
@@ -75,6 +76,7 @@ const AnimatedRoutes = () => {
         <Route path="/escape-room" element={<EscapeRoom />} />
         <Route path="/games" element={<GamesPage />} />
         <Route path="/chess-tournament" element={<ChessTournament />} />
+        <Route path="/credits" element={<Credits />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/cancel-booking" element={<CancelBooking />} />
         <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
