@@ -80,18 +80,19 @@ export async function deleteBooking(id: string): Promise<void> {
 }
 
 export async function getSlotAvailability(activity: Activity, date: string, timeSlot: string): Promise<number> {
+  const cap = SLOT_CAPACITY[activity];
   try {
     const { data, error } = await supabase.functions.invoke('check-availability', {
       body: { activity, date, timeSlot },
     });
     if (error) {
       console.error('Error checking availability:', error);
-      return MAX_GROUP_SIZE;
+      return cap;
     }
-    return data?.available ?? MAX_GROUP_SIZE;
+    return data?.available ?? cap;
   } catch (err) {
     console.error('Failed to check availability:', err);
-    return MAX_GROUP_SIZE;
+    return cap;
   }
 }
 
