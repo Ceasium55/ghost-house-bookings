@@ -36,6 +36,7 @@ const Credits = () => {
               PIANO DE LA GUARDIA Sancho, Technical Big Boss{"\n"}
               CROCI Frederic, IT Support and Coach{"\n"}
               BERNABEU Adrian, IT Support and Coach{"\n"}
+              REHRL Julia, logo design{"\n"}
               Special thanks to the rest of the Core Team
             </p>
           </div>
