@@ -15,6 +15,11 @@ const VALID_TIME_SLOTS = [
   '14:00', '14:20', '14:40',
 ];
 const MAX_GROUP_SIZE = 6;
+const SLOT_CAPACITY: Record<string, number> = {
+  'haunted-house': 6,
+  'escape-room': 18,
+  'games': 6,
+};
 const VALID_ACTIVITIES = ['haunted-house', 'escape-room', 'games'];
 
 serve(async (req) => {
@@ -79,10 +84,10 @@ serve(async (req) => {
       });
     }
 
-    // Validate group size
+    // Validate group size (group cap is always MAX_GROUP_SIZE regardless of activity capacity)
     const size = Number(groupSize);
-    if (!Number.isInteger(size) || size < 1) {
-      return new Response(JSON.stringify({ error: 'Invalid number' }), {
+    if (!Number.isInteger(size) || size < 1 || size > MAX_GROUP_SIZE) {
+      return new Response(JSON.stringify({ error: `Group size must be between 1 and ${MAX_GROUP_SIZE}.` }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -107,8 +112,9 @@ serve(async (req) => {
       });
     }
 
+    const slotCapacity = SLOT_CAPACITY[activity] ?? MAX_GROUP_SIZE;
     const totalBooked = (existing || []).reduce((sum: number, b: { group_size: number }) => sum + b.group_size, 0);
-    const available = MAX_GROUP_SIZE - totalBooked;
+    const available = slotCapacity - totalBooked;
 
     if (size > available) {
       return new Response(JSON.stringify({ error: `Only ${available} spot(s) remaining for this time slot.` }), {

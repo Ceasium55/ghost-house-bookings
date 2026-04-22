@@ -26,6 +26,13 @@ export const TIME_SLOTS = [
 export const EVENT_DATES = ['2026-05-07', '2026-05-08'];
 export const MAX_GROUP_SIZE = 6;
 
+// Per-slot capacity by activity (haunted-house & games: 1 room of 6; escape-room: 3 rooms of 6)
+export const SLOT_CAPACITY: Record<Activity, number> = {
+  'haunted-house': 6,
+  'escape-room': 18,
+  'games': 6,
+};
+
 export async function getBookings(activity?: Activity): Promise<Booking[]> {
   let query = supabase
     .from('bookings')
@@ -73,18 +80,19 @@ export async function deleteBooking(id: string): Promise<void> {
 }
 
 export async function getSlotAvailability(activity: Activity, date: string, timeSlot: string): Promise<number> {
+  const cap = SLOT_CAPACITY[activity];
   try {
     const { data, error } = await supabase.functions.invoke('check-availability', {
       body: { activity, date, timeSlot },
     });
     if (error) {
       console.error('Error checking availability:', error);
-      return MAX_GROUP_SIZE;
+      return cap;
     }
-    return data?.available ?? MAX_GROUP_SIZE;
+    return data?.available ?? cap;
   } catch (err) {
     console.error('Failed to check availability:', err);
-    return MAX_GROUP_SIZE;
+    return cap;
   }
 }
 
