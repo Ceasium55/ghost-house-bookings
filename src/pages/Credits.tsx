@@ -12,20 +12,32 @@ const Credits = () => {
         </h1>
 
         <section className="mb-12">
-          <h2 className="font-sans font-semibold text-3xl text-secondary mb-4">
+          <h2 className="font-sans font-semibold text-3xl text-secondary mb-4 text-center">
             IT Team
           </h2>
           <div className="rounded-lg border border-border bg-card p-6 min-h-[120px]">
-            <p className="text-tertiary italic">To be added.</p>
+            <p className="text-tertiary italic text-left whitespace-pre-line">
+              Manager - SKACKOV Sergej{"\n"}
+              Team Leader - TSITLAKIDIS Efstathios{"\n"}
+              Members - BOGUSLAWSKI Stefan, WILKINSON Thomas, SCALIA Lara Irena{"\n"}
+              Also collaborated - GAMBOA DOS SANTOS Evandro, FABRY Arthur, GIAKOUMIS Konstantinos, SARAGIOTIS Konstantinos
+            </p>
           </div>
         </section>
 
         <section className="mb-12">
-          <h2 className="font-sans font-semibold text-3xl text-secondary mb-4">
+          <h2 className="font-sans font-semibold text-3xl text-secondary mb-4 text-center">
             Special thanks
           </h2>
           <div className="rounded-lg border border-border bg-card p-6 min-h-[120px]">
-            <p className="text-tertiary italic">To be added.</p>
+            <p className="text-tertiary italic text-left whitespace-pre-line">
+              VERDONCKT Vanessa, Administration{"\n"}
+              SPANOU Chrysi, Springfest Core Team{"\n"}
+              PIANO DE LA GUARDIA Sancho, Technical Big Boss{"\n"}
+              CROCI Frederic, IT Support and Coach{"\n"}
+              BERNABEU Adrian, IT Support and Coach{"\n"}
+              Special thanks to the rest of the Core Team
+            </p>
           </div>
         </section>
 
