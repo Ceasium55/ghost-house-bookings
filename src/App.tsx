@@ -22,6 +22,7 @@ import AdminHub from "./pages/AdminHub";
 import AdminPage from "./pages/AdminPage";
 import AdminEscapeRoom from "./pages/AdminEscapeRoom";
 import AdminGames from "./pages/AdminGames";
+import AdminChess from "./pages/AdminChess";
 import AdminLogin from "./pages/AdminLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 import CancelBooking from "./pages/CancelBooking";
@@ -80,6 +81,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin/haunted-house" element={<ProtectedAdminRoute activity="haunted-house"><AdminPage /></ProtectedAdminRoute>} />
         <Route path="/admin/escape-room" element={<ProtectedAdminRoute activity="escape-room"><AdminEscapeRoom /></ProtectedAdminRoute>} />
         <Route path="/admin/games" element={<ProtectedAdminRoute activity="games"><AdminGames /></ProtectedAdminRoute>} />
+        <Route path="/admin/chess" element={<ProtectedAdminRoute activity="chess"><AdminChess /></ProtectedAdminRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </PageTransition>

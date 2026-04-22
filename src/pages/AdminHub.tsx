@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Ghost, KeyRound, Gamepad2, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
+import { Ghost, KeyRound, Gamepad2, Crown, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +9,7 @@ const allActivities = [
   { id: 'haunted-house' as AdminActivity, label: 'Haunted House', icon: Ghost, path: '/admin/haunted-house', description: 'Manage haunted house bookings and availability' },
   { id: 'escape-room' as AdminActivity, label: 'Escape Room', icon: KeyRound, path: '/admin/escape-room', description: 'Manage escape room bookings and availability' },
   { id: 'games' as AdminActivity, label: 'Games', icon: Gamepad2, path: '/admin/games', description: 'Manage games activities' },
+  { id: 'chess' as AdminActivity, label: 'Chess Tournament', icon: Crown, path: '/admin/chess', description: 'Manage chess tournament registrations' },
 ];
 
 const AdminHub = () => {
@@ -58,7 +59,7 @@ const AdminHub = () => {
           <p className="text-tertiary text-lg">Choose an activity to manage</p>
         </div>
 
-        <div className={`grid grid-cols-1 ${visibleActivities.length >= 3 ? 'sm:grid-cols-3' : visibleActivities.length === 2 ? 'sm:grid-cols-2' : ''} gap-6 md:gap-8`}>
+        <div className={`grid grid-cols-1 ${visibleActivities.length >= 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : visibleActivities.length === 3 ? 'sm:grid-cols-3' : visibleActivities.length === 2 ? 'sm:grid-cols-2' : ''} gap-6 md:gap-8`}>
           {visibleActivities.map(({ label, icon: Icon, path, description }) => (
             <button
               key={path}
