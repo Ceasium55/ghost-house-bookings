@@ -82,7 +82,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
         <Route path="/admin/haunted-house" element={<ProtectedAdminRoute activity="haunted-house"><AdminPage /></ProtectedAdminRoute>} />
         <Route path="/admin/escape-room" element={<ProtectedAdminRoute activity="escape-room"><AdminEscapeRoom /></ProtectedAdminRoute>} />
-        <Route path="/admin/games" element={<ProtectedAdminRoute activity="games"><AdminGames /></ProtectedAdminRoute>} />
+        
         <Route path="/admin/chess" element={<ProtectedAdminRoute activity="chess"><AdminChess /></ProtectedAdminRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
