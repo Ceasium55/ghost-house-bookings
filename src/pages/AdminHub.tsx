@@ -8,7 +8,6 @@ import { getAccessibleActivities, type AdminActivity } from '@/lib/adminAuth';
 const allActivities = [
   { id: 'haunted-house' as AdminActivity, label: 'Haunted House', icon: Ghost, path: '/admin/haunted-house', description: 'Manage haunted house bookings and availability' },
   { id: 'escape-room' as AdminActivity, label: 'Escape Room', icon: KeyRound, path: '/admin/escape-room', description: 'Manage escape room bookings and availability' },
-  { id: 'games' as AdminActivity, label: 'Games', icon: Gamepad2, path: '/admin/games', description: 'Manage games activities' },
   { id: 'chess' as AdminActivity, label: 'Chess Tournament', icon: Crown, path: '/admin/chess', description: 'Manage chess tournament registrations' },
 ];
 
