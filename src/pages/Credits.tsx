@@ -20,7 +20,8 @@ const Credits = () => {
               Manager - SKACKOV Sergej{"\n"}
               Team Leader - TSITLAKIDIS Efstathios{"\n"}
               Members - BOGUSLAWSKI Stefan, WILKINSON Thomas, SCALIA Lara Irena{"\n"}
-              Also collaborated - GAMBOA DOS SANTOS Evandro, FABRY Arthur, GIAKOUMIS Konstantinos, SARAGIOTIS Konstantinos
+              Also collaborated - GAMBOA DOS SANTOS Evandro, FABRY Arthur, GIAKOUMIS Konstantinos, SARAGIOTIS Konstantinos{"\n"}
+              Coach - HUBLET Magali
             </p>
           </div>
         </section>
