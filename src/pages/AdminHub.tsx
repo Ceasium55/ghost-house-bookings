@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Ghost, KeyRound, Gamepad2, Crown, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
+import { Ghost, KeyRound, Crown, ArrowLeft, LogOut, Loader2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
