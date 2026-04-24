@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Ghost, KeyRound, Gamepad2, Crown } from 'lucide-react';
+import { Ghost, KeyRound, Crown } from 'lucide-react';
 
 const activities = [
   {
@@ -15,13 +15,6 @@ const activities = [
     path: '/escape-room',
     description: 'Solve puzzles and escape before time runs out',
     split: 'left' as const,
-  },
-  {
-    label: 'Games',
-    icon: Gamepad2,
-    path: '/games',
-    description: 'Fun activities and challenges for everyone',
-    split: 'right' as const,
   },
   {
     label: 'Chess Tournament',
