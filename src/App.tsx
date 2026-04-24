@@ -22,7 +22,7 @@ import Credits from "./pages/Credits";
 import AdminHub from "./pages/AdminHub";
 import AdminPage from "./pages/AdminPage";
 import AdminEscapeRoom from "./pages/AdminEscapeRoom";
-import AdminGames from "./pages/AdminGames";
+
 import AdminChess from "./pages/AdminChess";
 import AdminLogin from "./pages/AdminLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
