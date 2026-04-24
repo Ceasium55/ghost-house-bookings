@@ -16,7 +16,7 @@ import PageTransition from "@/components/PageTransition";
 import LandingPage from "./pages/LandingPage";
 import HauntedHouse from "./pages/Index";
 import EscapeRoom from "./pages/EscapeRoom";
-import GamesPage from "./pages/GamesPage";
+
 import ChessTournament from "./pages/ChessTournament";
 import Credits from "./pages/Credits";
 import AdminHub from "./pages/AdminHub";
