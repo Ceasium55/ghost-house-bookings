@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export type Activity = 'haunted-house' | 'escape-room' | 'games';
+export type Activity = 'haunted-house' | 'escape-room';
 
 export interface Booking {
   id: string;
