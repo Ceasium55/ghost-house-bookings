@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Ghost, KeyRound, Gamepad2, Crown } from 'lucide-react';
+import { Ghost, KeyRound, Crown } from 'lucide-react';
 
 const activities = [
   {
@@ -15,13 +15,6 @@ const activities = [
     path: '/escape-room',
     description: 'Solve puzzles and escape before time runs out',
     split: 'left' as const,
-  },
-  {
-    label: 'Games',
-    icon: Gamepad2,
-    path: '/games',
-    description: 'Fun activities and challenges for everyone',
-    split: 'right' as const,
   },
   {
     label: 'Chess Tournament',
@@ -44,7 +37,7 @@ const LandingPage = () => {
         May 7–8, 2026 — Brussels. Choose your adventure.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full max-w-5xl overflow-visible">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-5xl overflow-visible">
         {activities.map(({ label, icon: Icon, path, description, split }) => (
           <button
             key={path}

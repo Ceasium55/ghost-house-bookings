@@ -16,13 +16,13 @@ import PageTransition from "@/components/PageTransition";
 import LandingPage from "./pages/LandingPage";
 import HauntedHouse from "./pages/Index";
 import EscapeRoom from "./pages/EscapeRoom";
-import GamesPage from "./pages/GamesPage";
+
 import ChessTournament from "./pages/ChessTournament";
 import Credits from "./pages/Credits";
 import AdminHub from "./pages/AdminHub";
 import AdminPage from "./pages/AdminPage";
 import AdminEscapeRoom from "./pages/AdminEscapeRoom";
-import AdminGames from "./pages/AdminGames";
+
 import AdminChess from "./pages/AdminChess";
 import AdminLogin from "./pages/AdminLogin";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
@@ -74,7 +74,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/haunted-house" element={<HauntedHouse />} />
         <Route path="/escape-room" element={<EscapeRoom />} />
-        <Route path="/games" element={<GamesPage />} />
+        
         <Route path="/chess-tournament" element={<ChessTournament />} />
         <Route path="/credits" element={<Credits />} />
         <Route path="/admin/login" element={<AdminLogin />} />
@@ -82,7 +82,7 @@ const AnimatedRoutes = () => {
         <Route path="/admin" element={<ProtectedAdminRoute><AdminHub /></ProtectedAdminRoute>} />
         <Route path="/admin/haunted-house" element={<ProtectedAdminRoute activity="haunted-house"><AdminPage /></ProtectedAdminRoute>} />
         <Route path="/admin/escape-room" element={<ProtectedAdminRoute activity="escape-room"><AdminEscapeRoom /></ProtectedAdminRoute>} />
-        <Route path="/admin/games" element={<ProtectedAdminRoute activity="games"><AdminGames /></ProtectedAdminRoute>} />
+        
         <Route path="/admin/chess" element={<ProtectedAdminRoute activity="chess"><AdminChess /></ProtectedAdminRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
