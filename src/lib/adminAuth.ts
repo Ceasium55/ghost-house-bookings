@@ -1,11 +1,10 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export type AdminActivity = 'haunted-house' | 'escape-room' | 'games' | 'chess';
+export type AdminActivity = 'haunted-house' | 'escape-room' | 'chess';
 
 const TABLE_MAP: Partial<Record<AdminActivity, string>> = {
   'haunted-house': 'haunted_house_admins',
   'escape-room': 'escape_room_admins',
-  'games': 'games_admins',
 };
 
 export async function isSuperAdmin(email: string | undefined): Promise<boolean> {
@@ -43,7 +42,7 @@ export async function isAnyAdmin(email: string | undefined): Promise<boolean> {
   if (!email) return false;
   const superAdmin = await isSuperAdmin(email);
   if (superAdmin) return true;
-  const activities: AdminActivity[] = ['haunted-house', 'escape-room', 'games'];
+  const activities: AdminActivity[] = ['haunted-house', 'escape-room'];
   const results = await Promise.all(activities.map(a => isActivityAdmin(email, a)));
   return results.some(Boolean);
 }
@@ -51,8 +50,8 @@ export async function isAnyAdmin(email: string | undefined): Promise<boolean> {
 export async function getAccessibleActivities(email: string | undefined): Promise<AdminActivity[]> {
   if (!email) return [];
   const superAdmin = await isSuperAdmin(email);
-  if (superAdmin) return ['haunted-house', 'escape-room', 'games', 'chess'];
-  const activities: AdminActivity[] = ['haunted-house', 'escape-room', 'games'];
+  if (superAdmin) return ['haunted-house', 'escape-room', 'chess'];
+  const activities: AdminActivity[] = ['haunted-house', 'escape-room'];
   const results = await Promise.all(activities.map(a => isActivityAdmin(email, a)));
   return activities.filter((_, i) => results[i]);
 }
