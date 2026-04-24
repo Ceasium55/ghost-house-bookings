@@ -74,7 +74,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/haunted-house" element={<HauntedHouse />} />
         <Route path="/escape-room" element={<EscapeRoom />} />
-        <Route path="/games" element={<GamesPage />} />
+        
         <Route path="/chess-tournament" element={<ChessTournament />} />
         <Route path="/credits" element={<Credits />} />
         <Route path="/admin/login" element={<AdminLogin />} />
