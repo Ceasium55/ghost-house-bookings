@@ -90,14 +90,8 @@ const AdminLogin = () => {
               />
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                {isSignUp ? 'Create Account' : 'Sign In'}
+                Sign In
               </Button>
-              <p className="text-center text-sm text-muted-foreground">
-                {isSignUp ? 'Already have an account?' : 'First time?'}{' '}
-                <button type="button" className="text-primary hover:underline" onClick={() => setIsSignUp(!isSignUp)}>
-                  {isSignUp ? 'Sign in' : 'Create account'}
-                </button>
-              </p>
               <p className="text-center text-sm text-muted-foreground mt-2">
                 Note: only pre-authorised usernames may access. Contact IT Team in case of issue.
               </p>
