@@ -12,6 +12,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LoadingScreen from "@/components/LoadingScreen";
+import DisclaimerGate from "@/components/DisclaimerGate";
 import PageTransition from "@/components/PageTransition";
 import LandingPage from "./pages/LandingPage";
 import HauntedHouse from "./pages/Index";
@@ -92,11 +93,14 @@ const AnimatedRoutes = () => {
 
 const App = () => {
   const [loading, setLoading] = useState(true);
+  const [accepted, setAccepted] = useState(false);
   const handleLoaded = useCallback(() => setLoading(false), []);
+  const handleAccepted = useCallback(() => setAccepted(true), []);
 
   return (
     <QueryClientProvider client={queryClient}>
       {loading && <LoadingScreen onFinished={handleLoaded} />}
+      {!loading && !accepted && <DisclaimerGate onContinue={handleAccepted} />}
       <TooltipProvider>
         <Toaster />
         <Sonner />
