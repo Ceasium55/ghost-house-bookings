@@ -148,6 +148,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_read_activity: {
+        Args: { _activity: string; _email: string }
+        Returns: boolean
+      }
       is_super_admin: { Args: { _email: string }; Returns: boolean }
     }
     Enums: {
