@@ -93,9 +93,22 @@ const AnimatedRoutes = () => {
 
 const App = () => {
   const [loading, setLoading] = useState(true);
-  const [accepted, setAccepted] = useState(false);
+  const [accepted, setAccepted] = useState(() => {
+    try {
+      return sessionStorage.getItem("disclaimerAccepted") === "1";
+    } catch {
+      return false;
+    }
+  });
   const handleLoaded = useCallback(() => setLoading(false), []);
-  const handleAccepted = useCallback(() => setAccepted(true), []);
+  const handleAccepted = useCallback(() => {
+    try {
+      sessionStorage.setItem("disclaimerAccepted", "1");
+    } catch {
+      /* ignore */
+    }
+    setAccepted(true);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
